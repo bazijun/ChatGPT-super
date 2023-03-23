@@ -52,6 +52,7 @@ export default {
     general: '总览',
     config: '配置',
     avatarLink: '头像链接',
+    gptAvatarLink: 'AI头像链接',
     name: '名称',
     description: '描述',
     resetUserInfo: '重置用户信息',

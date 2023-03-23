@@ -52,6 +52,7 @@ export default {
     general: 'General',
     config: 'Config',
     avatarLink: 'Avatar Link',
+    gptAvatarLink: 'AI Avatar Link',
     name: 'Name',
     description: 'Description',
     resetUserInfo: 'Reset UserInfo',

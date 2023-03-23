@@ -22,6 +22,8 @@ const userInfo = computed(() => userStore.userInfo)
 
 const avatar = ref(userInfo.value.avatar ?? '')
 
+const aiAvatar = ref(userInfo.value.aiAvatar ?? '')
+
 const name = ref(userInfo.value.name ?? '')
 
 const description = ref(userInfo.value.description ?? '')
@@ -129,6 +131,15 @@ function handleImportButtonClick(): void {
           <NInput v-model:value="avatar" placeholder="" />
         </div>
         <NButton size="tiny" text type="primary" @click="updateUserInfo({ avatar })">
+          {{ $t('common.save') }}
+        </NButton>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.gptAvatarLink') }}</span>
+        <div class="flex-1">
+          <NInput v-model:value="aiAvatar" placeholder="" />
+        </div>
+        <NButton size="tiny" text type="primary" @click="updateUserInfo({ aiAvatar })">
           {{ $t('common.save') }}
         </NButton>
       </div>
