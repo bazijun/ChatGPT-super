@@ -12,7 +12,8 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check build-only",
+    "limit": "npx --max_old_space_size=4096",
+    "build": "run-p type-check limit build-only",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
