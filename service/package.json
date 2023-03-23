@@ -18,6 +18,7 @@
     "dev": "esno watch ./src/index.ts",
     "prod": "esno ./build/index.js",
     "build": "pnpm clean && tsup",
+    "build-start": "pnpm build && esno ./build/index.js",
     "clean": "rimraf build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

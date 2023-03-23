@@ -83,3 +83,9 @@ export default {
     downloadError: '请检查网络状态与 JSON 文件有效性',
   },
 }
+
+// type CTYPE<objs, name = ''> = objs extends Record<infer n, infer obj extends Record<string, any>> ? CTYPE<obj, n> : `${name}.${keyof objs}`
+
+// type El = CTYPE<typeof C>
+
+// const a: El = ''

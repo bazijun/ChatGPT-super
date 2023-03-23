@@ -12,7 +12,7 @@ import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useChatStore, usePromptStore } from '@/store'
+import { useChatStore, usePromptPassStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
 
@@ -25,6 +25,7 @@ const dialog = useDialog()
 const ms = useMessage()
 
 const chatStore = useChatStore()
+const promptPassStore = usePromptPassStore()
 
 useCopyCode()
 
@@ -37,6 +38,7 @@ const { uuid } = route.params as { uuid: string }
 
 const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
 const conversationList = computed(() => dataSources.value.filter(item => (!item.inversion && !item.error)))
+const promptPass = computed(() => promptPassStore.promptPass)
 
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
@@ -526,6 +528,7 @@ onUnmounted(() => {
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <NInput
                 v-model:value="prompt"
+                :disabled="!promptPass"
                 type="textarea"
                 :placeholder="placeholder"
                 :autosize="{ minRows: 1, maxRows: isMobile ? 4 : 8 }"
