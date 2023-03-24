@@ -12,6 +12,7 @@ export default defineConfig((env) => {
         '@': path.resolve(process.cwd(), 'src'),
       },
     },
+    publicDir: './',
     plugins: [
       vue(),
       VitePWA({
