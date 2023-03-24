@@ -7,12 +7,12 @@ export default defineConfig((env) => {
   const viteEnv = loadEnv(env.mode, process.cwd()) as unknown as ImportMetaEnv
 
   return {
+    base: './',
     resolve: {
       alias: {
         '@': path.resolve(process.cwd(), 'src'),
       },
     },
-    publicDir: './',
     plugins: [
       vue(),
       VitePWA({
