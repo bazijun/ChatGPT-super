@@ -1,5 +1,4 @@
 import express from 'express'
-import cors from 'cors'
 import type { ChatContext, ChatMessage } from './chatgpt'
 import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
@@ -13,12 +12,10 @@ app.use(express.json())
 
 app.all('*', (_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Headers', 'authorization, Content-Type')
+  res.header('Access-Control-Allow-Headers', 'Authorization, application/json, Content-Type')
   res.header('Access-Control-Allow-Methods', '*')
   next()
 })
-
-app.use(cors())
 
 router.post('/chat-process', auth, async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
