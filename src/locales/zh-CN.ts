@@ -65,7 +65,7 @@ export default {
     timeout: '超时',
     socks: 'Socks',
     httpsProxy: 'HTTPS Proxy',
-    balance: 'API余额',
+    balance: 'API已花费',
   },
   store: {
     local: '本地',

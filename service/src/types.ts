@@ -23,4 +23,8 @@ export interface ModelConfig {
   balance?: string
 }
 
+export interface BalanceResponse {
+  total_usage: number
+}
+
 export type ApiModel = 'ChatGPTAPI' | 'ChatGPTUnofficialProxyAPI' | undefined

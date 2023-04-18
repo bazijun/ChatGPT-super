@@ -7,10 +7,9 @@ import { ChatGPTAPI, ChatGPTUnofficialProxyAPI } from 'chatgpt'
 import { SocksProxyAgent } from 'socks-proxy-agent'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import fetch from 'node-fetch'
-import axios from 'axios'
 import { sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
-import type { ApiModel, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
+import type { ApiModel, BalanceResponse, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
 
 const ErrorCodeMessage: Record<string, string> = {
   401: '[OpenAI] 提供错误的API密钥 | Incorrect API key provided',
@@ -111,7 +110,6 @@ async function chatReplyProcess(
 async function fetchBalance() {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY
   const OPENAI_API_BASE_URL = process.env.OPENAI_API_BASE_URL
-
   if (!isNotEmptyString(OPENAI_API_KEY))
     return Promise.resolve('-')
 
@@ -119,11 +117,14 @@ async function fetchBalance() {
     ? OPENAI_API_BASE_URL
     : 'https://api.openai.com'
 
+  const [startDate, endDate] = formatDate()
+  const urlUsage = `${API_BASE_URL}/v1/dashboard/billing/usage?start_date=${startDate}&end_date=${endDate}`
   try {
     const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OPENAI_API_KEY}` }
-    const response = await axios.get(`${API_BASE_URL}/dashboard/billing/credit_grants`, { headers })
-    const balance = response.data.total_available ?? 0
-    return Promise.resolve(balance.toFixed(3))
+    const useResponse = await fetch(urlUsage, { headers })
+    const usageData = await useResponse.json() as BalanceResponse
+    const usage = Math.round(usageData.total_usage) / 100
+    return Promise.resolve(usage ? `$${usage}` : '-')
   }
   catch {
     return Promise.resolve('-')
@@ -168,6 +169,16 @@ function setupProxy(options: ChatGPTAPIOptions | ChatGPTUnofficialProxyAPIOption
 
 function currentModel(): ApiModel {
   return apiModel
+}
+
+function formatDate(): string[] {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = today.getMonth() + 1
+  const lastDay = new Date(year, month, 0)
+  const formattedFirstDay = `${year}-${month.toString().padStart(2, '0')}-01`
+  const formattedLastDay = `${year}-${month.toString().padStart(2, '0')}-${lastDay.getDate().toString().padStart(2, '0')}`
+  return [formattedFirstDay, formattedLastDay]
 }
 
 export type { ChatContext, ChatMessage }
