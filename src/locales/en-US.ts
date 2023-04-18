@@ -55,6 +55,7 @@ export default {
     gptAvatarLink: 'AI Avatar Link',
     name: 'Name',
     description: 'Description',
+    systemMessage: 'SystemMessage',
     resetUserInfo: 'Reset UserInfo',
     chatHistory: 'ChatHistory',
     theme: 'Theme',

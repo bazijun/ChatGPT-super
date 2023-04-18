@@ -55,6 +55,7 @@ export default {
     gptAvatarLink: 'AI头像链接',
     name: '名称',
     description: '描述',
+    systemMessage: '初始指令',
     resetUserInfo: '重置用户信息',
     chatHistory: '聊天记录',
     theme: '主题',

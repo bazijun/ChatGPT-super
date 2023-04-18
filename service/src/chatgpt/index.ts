@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import * as dotenv from 'dotenv'
 import 'isomorphic-fetch'
 import type { ChatGPTAPIOptions, ChatMessage, SendMessageOptions } from 'chatgpt'
@@ -19,7 +21,12 @@ const ErrorCodeMessage: Record<string, string> = {
   500: '[OpenAI] 服务器繁忙，请稍后再试 | Internal Server Error',
 }
 
-dotenv.config()
+const localEnvPath = path.resolve(__dirname, '../../.env.local')
+
+if (fs.existsSync(localEnvPath))
+  dotenv.config({ path: localEnvPath })
+else
+  dotenv.config()
 
 const timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT_MS : 30 * 1000
 
@@ -69,6 +76,7 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 
 async function chatReplyProcess(
   message: string,
+  systemMessage?: string,
   lastContext?: { conversationId?: string; parentMessageId?: string },
   process?: (chat: ChatMessage) => void,
 ) {
@@ -81,9 +89,9 @@ async function chatReplyProcess(
       else
         options = { ...lastContext }
     }
-
     const response = await api.sendMessage(message, {
       ...options,
+      systemMessage,
       onProgress: (partialResponse) => {
         process?.(partialResponse)
       },

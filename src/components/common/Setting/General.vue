@@ -5,6 +5,7 @@ import type { Language, Theme } from '@/store/modules/app/helper'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useUserStore } from '@/store'
 import type { UserInfo } from '@/store/modules/user/helper'
+import { getDefaultSystemMessage } from '@/store/modules/user/helper'
 import { getCurrentDate } from '@/utils/functions'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
@@ -26,7 +27,9 @@ const aiAvatar = ref(userInfo.value.aiAvatar ?? '')
 
 const name = ref(userInfo.value.name ?? '')
 
-const description = ref(userInfo.value.description ?? '')
+const systemMessage = ref(userInfo.value.systemMessage ?? '')
+
+const DefaultSystemMessage = getDefaultSystemMessage()
 
 const language = computed({
   get() {
@@ -153,19 +156,25 @@ function handleImportButtonClick(): void {
         </NButton>
       </div>
       <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span>
+        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.systemMessage') }}</span>
         <div class="flex-1">
-          <NInput v-model:value="description" placeholder="" />
+          <NInput v-model:value="systemMessage" type="textarea" placeholder="" rows="4" />
+          <div class="dark:text-orange-200 text-orange-400">
+            设置该项后，AI将会在任何对话中，一直扮演你在初始指令中所描述的"东西"😋
+          </div>
         </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ description })">
+        <NButton size="tiny" text type="primary" @click="updateUserInfo({ systemMessage })">
           {{ $t('common.save') }}
+        </NButton>
+        <NButton
+          size="tiny" text type="warning"
+          @click="() => { updateUserInfo({ systemMessage: DefaultSystemMessage }); systemMessage = DefaultSystemMessage }"
+        >
+          {{ $t('common.reset') }}
         </NButton>
       </div>
 
-      <div
-        class="flex items-center space-x-4"
-        :class="isMobile && 'items-start'"
-      >
+      <div class="flex items-center space-x-4" :class="isMobile && 'items-start'">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.chatHistory') }}</span>
 
         <div class="flex flex-wrap items-center gap-4">
@@ -201,11 +210,7 @@ function handleImportButtonClick(): void {
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.theme') }}</span>
         <div class="flex flex-wrap items-center gap-4">
           <template v-for="item of themeOptions" :key="item.key">
-            <NButton
-              size="small"
-              :type="item.key === theme ? 'primary' : undefined"
-              @click="appStore.setTheme(item.key)"
-            >
+            <NButton size="small" :type="item.key === theme ? 'primary' : undefined" @click="appStore.setTheme(item.key)">
               <template #icon>
                 <SvgIcon :icon="item.icon" />
               </template>
@@ -217,9 +222,7 @@ function handleImportButtonClick(): void {
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.language') }}</span>
         <div class="flex flex-wrap items-center gap-4">
           <NSelect
-            style="width: 140px"
-            :value="language"
-            :options="languageOptions"
+            style="width: 140px" :value="language" :options="languageOptions"
             @update-value="value => appStore.setLanguage(value)"
           />
         </div>

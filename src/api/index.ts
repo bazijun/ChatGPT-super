@@ -1,5 +1,6 @@
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios'
 import { post } from '@/utils/request'
+import { getLocalState } from '@/store/modules/user/helper'
 
 export function fetchChatAPI<T = any>(
   prompt: string,
@@ -24,11 +25,13 @@ export function fetchChatAPIProcess<T = any>(
     prompt: string
     options?: { conversationId?: string; parentMessageId?: string }
     signal?: GenericAbortSignal
-    onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void },
+    onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void
+  },
 ) {
+  const { userInfo } = getLocalState()
   return post<T>({
     url: '/chat-process',
-    data: { prompt: params.prompt, options: params.options },
+    data: { prompt: params.prompt, systemMessage: userInfo.systemMessage, options: params.options },
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,
   })

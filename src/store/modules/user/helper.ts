@@ -7,10 +7,16 @@ export interface UserInfo {
   aiAvatar: string
   name: string
   description: string
+  systemMessage: string
 }
 
 export interface UserState {
   userInfo: UserInfo
+}
+
+export const getDefaultSystemMessage = () => {
+  const currentDate = new Date().toISOString().split('T')[0]
+  return `你是ChatGPT，一种由OpenAI训练的大型语言模型。回答尽可能简洁。 \n知识截止日期：2021年9月1日，\n当前日期：${currentDate}。`
 }
 
 export function defaultSetting(): UserState {
@@ -20,6 +26,7 @@ export function defaultSetting(): UserState {
       aiAvatar: 'https://cdn.bazijun.top/img/neko-gril.png',
       name: '小把子',
       description: 'Power by <a href="https://github.com/Chanzhaoyu/chatgpt-bot" class="text-blue-500" target="_blank" >Github</a>',
+      systemMessage: getDefaultSystemMessage(),
     },
   }
 }
