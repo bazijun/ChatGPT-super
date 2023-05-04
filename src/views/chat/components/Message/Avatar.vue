@@ -18,11 +18,11 @@ const aiAvatar = computed(() => userStore.userInfo.aiAvatar)
 
 <template>
   <template v-if="image">
-    <NAvatar v-if="isString(avatar) && avatar.length > 0" :src="avatar" :fallback-src="defaultAvatar" />
-    <NAvatar v-else round :src="defaultAvatar" />
+    <NAvatar v-if="isString(avatar) && avatar.length > 0" :src="avatar" :fallback-src="defaultAvatar" :size="48" />
+    <NAvatar v-else :src="defaultAvatar" :size="48" />
   </template>
   <template v-else>
-    <NAvatar v-if="isString(aiAvatar) && aiAvatar.length > 0" :src="aiAvatar" :fallback-src="defaultAIAvatar" />
-    <NAvatar v-else round :src="defaultAIAvatar" />
+    <NAvatar v-if="isString(aiAvatar) && aiAvatar.length > 0" :src="aiAvatar" :fallback-src="defaultAIAvatar" :size="48" />
+    <NAvatar v-else :src="defaultAIAvatar" :size="48" />
   </template>
 </template>
