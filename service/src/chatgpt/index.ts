@@ -44,6 +44,7 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
     const model = isNotEmptyString(OPENAI_API_MODEL) ? OPENAI_API_MODEL : 'gpt-3.5-turbo'
 
     const options: ChatGPTAPIOptions = {
+      maxModelTokens: 8000,
       apiKey: process.env.OPENAI_API_KEY,
       completionParams: { model },
       debug: true,
@@ -118,7 +119,7 @@ async function fetchBalance() {
     : 'https://api.openai.com'
 
   const [startDate, endDate] = formatDate()
-  const urlUsage = `${API_BASE_URL}/v1/dashboard/billing/usage?start_date=${startDate}&end_date=${endDate}`
+  const urlUsage = `${API_BASE_URL}/dashboard/billing/usage?start_date=${startDate}&end_date=${endDate}`
   try {
     const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OPENAI_API_KEY}` }
     const useResponse = await fetch(urlUsage, { headers })
