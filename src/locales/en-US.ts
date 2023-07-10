@@ -66,6 +66,7 @@ export default {
     socks: 'Socks',
     httpsProxy: 'HTTPS Proxy',
     balance: 'API Balance',
+    aiModel: 'AI Model',
   },
   store: {
     local: 'Local',

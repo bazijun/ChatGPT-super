@@ -4,8 +4,8 @@ import { NButton, NInput, NPopconfirm, NSelect, useMessage } from 'naive-ui'
 import type { Language, Theme } from '@/store/modules/app/helper'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useUserStore } from '@/store'
-import type { UserInfo } from '@/store/modules/user/helper'
-import { getDefaultSystemMessage } from '@/store/modules/user/helper'
+import type { CHAT_GPT_MODEL, UserInfo } from '@/store/modules/user/helper'
+import { chatGPTModelOptions, getDefaultSystemMessage } from '@/store/modules/user/helper'
 import { getCurrentDate } from '@/utils/functions'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
@@ -30,6 +30,15 @@ const name = ref(userInfo.value.name ?? '')
 const systemMessage = ref(userInfo.value.systemMessage ?? '')
 
 const DefaultSystemMessage = getDefaultSystemMessage()
+
+const aiModel = computed({
+  get() {
+    return userInfo.value.aiModel ?? 'gpt-3.5-turbo-16k'
+  },
+  set(value: CHAT_GPT_MODEL) {
+    updateUserInfo({ aiAvatar: value })
+  },
+})
 
 const language = computed({
   get() {
@@ -129,6 +138,35 @@ function handleImportButtonClick(): void {
   <div class="p-4 space-y-5 min-h-[200px]">
     <div class="space-y-6">
       <div class="flex items-center space-x-4">
+        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.aiModel') }}</span>
+        <div class="flex flex-wrap items-center gap-4">
+          <NSelect
+            style="width: 180px" :value="aiModel" :options="chatGPTModelOptions"
+            @update-value="value => {
+              updateUserInfo({ aiModel: value })
+            }"
+          />
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.systemMessage') }}</span>
+        <div class="flex-1">
+          <NInput v-model:value="systemMessage" type="textarea" placeholder="" rows="4" />
+          <div class="dark:text-orange-200 text-orange-400">
+            设置该项后，AI将会在任何对话中，一直扮演你在初始指令中所描述的"东西"😋
+          </div>
+        </div>
+        <NButton size="tiny" text type="primary" @click="updateUserInfo({ systemMessage })">
+          {{ $t('common.save') }}
+        </NButton>
+        <NButton
+          size="tiny" text type="warning"
+          @click="() => { updateUserInfo({ systemMessage: DefaultSystemMessage }); systemMessage = DefaultSystemMessage }"
+        >
+          {{ $t('common.reset') }}
+        </NButton>
+      </div>
+      <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.avatarLink') }}</span>
         <div class="flex-1">
           <NInput v-model:value="avatar" placeholder="" />
@@ -155,25 +193,6 @@ function handleImportButtonClick(): void {
           {{ $t('common.save') }}
         </NButton>
       </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.systemMessage') }}</span>
-        <div class="flex-1">
-          <NInput v-model:value="systemMessage" type="textarea" placeholder="" rows="4" />
-          <div class="dark:text-orange-200 text-orange-400">
-            设置该项后，AI将会在任何对话中，一直扮演你在初始指令中所描述的"东西"😋
-          </div>
-        </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ systemMessage })">
-          {{ $t('common.save') }}
-        </NButton>
-        <NButton
-          size="tiny" text type="warning"
-          @click="() => { updateUserInfo({ systemMessage: DefaultSystemMessage }); systemMessage = DefaultSystemMessage }"
-        >
-          {{ $t('common.reset') }}
-        </NButton>
-      </div>
-
       <div class="flex items-center space-x-4" :class="isMobile && 'items-start'">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.chatHistory') }}</span>
 

@@ -77,6 +77,7 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 async function chatReplyProcess(
   message: string,
   systemMessage?: string,
+  model?: string,
   lastContext?: { conversationId?: string; parentMessageId?: string },
   process?: (chat: ChatMessage) => void,
 ) {
@@ -91,6 +92,7 @@ async function chatReplyProcess(
     }
     const response = await api.sendMessage(message, {
       ...options,
+      completionParams: { model },
       systemMessage,
       onProgress: (partialResponse) => {
         process?.(partialResponse)

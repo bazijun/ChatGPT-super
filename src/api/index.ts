@@ -31,7 +31,7 @@ export function fetchChatAPIProcess<T = any>(
   const { userInfo } = getLocalState()
   return post<T>({
     url: '/chat-process',
-    data: { prompt: params.prompt, systemMessage: userInfo.systemMessage, options: params.options },
+    data: { prompt: params.prompt, systemMessage: userInfo.systemMessage, model: userInfo.aiModel, options: params.options },
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,
   })
