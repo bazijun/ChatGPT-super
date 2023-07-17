@@ -1,6 +1,6 @@
 {
   "name": "chatgpt-web-service",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "private": false,
   "description": "ChatGPT Web Service",
   "author": "ChenZhaoYu <chenzhaoyu1994@gmail.com>",
@@ -36,6 +36,7 @@
     "express": "^4.18.2",
     "https-proxy-agent": "^5.0.1",
     "isomorphic-fetch": "^3.0.0",
+    "moment": "^2.29.4",
     "node-fetch": "^3.3.0",
     "socks-proxy-agent": "^7.0.0"
   },

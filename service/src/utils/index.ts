@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 interface SendResponseOptions<T = any> {
   type: 'Success' | 'Fail'
   message?: string
@@ -23,7 +25,10 @@ export function sendResponse<T>(options: SendResponseOptions<T>) {
 
 /** 是否为某天 */
 export function isSomeDay(month: number, day: number) {
-  const today = new Date()
+  const today = moment().utcOffset(8).toDate()
+  global.console.log('this_time ===>', today.toLocaleString())
+  global.console.log('this_date ===>', today)
+  global.console.log('this_minute ===>', today.toLocaleTimeString())
   const Month = today.getMonth() + 1
   const Day = today.getDate()
   return (Month === month && Day === day)
