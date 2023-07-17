@@ -24,9 +24,9 @@ router.post('/chat-process', auth, async (req, res) => {
   const defaultModel = isNotEmptyString(OPENAI_API_MODEL) ? OPENAI_API_MODEL : 'gpt-3.5-turbo'
   res.setHeader('Content-type', 'application/octet-stream')
   const today = moment(new Date()).utcOffset(8)
-  global.console.log('this_time ===>', today.toLocaleString())
+  global.console.log('this_time ===>', today.toDate().toDateString())
   global.console.log('this_date ===>', today)
-  global.console.log('this_minute ===>', today.format('YYYY-MMdd'))
+  global.console.log('this_minute ===>', today.format('YYYY-MM-DD HH:mm:ss'))
   try {
     const { prompt, systemMessage, model = defaultModel, options = {} } = req.body as { prompt: string; model: string; systemMessage: string; options?: ChatContext }
     let firstChunk = true
