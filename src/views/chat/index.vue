@@ -448,7 +448,8 @@ const footerClass = computed(() => {
 
 onMounted(() => {
   scrollToBottom()
-  userStore.updateUserInfo({ aiAvatar: 'https://cdn.bazijun.top/img/cut-cat1.png' })
+  // Init App
+  userStore.updateUserInfo({ aiAvatar: 'https://cdn.bazijun.top/img/cut-cat1.png', aiModel: 'gpt-3.5-turbo' })
 })
 
 onUnmounted(() => {

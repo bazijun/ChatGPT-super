@@ -23,8 +23,6 @@ const userInfo = computed(() => userStore.userInfo)
 
 const avatar = ref(userInfo.value.avatar ?? '')
 
-const aiAvatar = ref(userInfo.value.aiAvatar ?? '')
-
 const name = ref(userInfo.value.name ?? '')
 
 const systemMessage = ref(userInfo.value.systemMessage ?? '')
@@ -33,7 +31,7 @@ const DefaultSystemMessage = getDefaultSystemMessage()
 
 const aiModel = computed({
   get() {
-    return userInfo.value.aiModel ?? 'gpt-3.5-turbo-16k'
+    return userInfo.value.aiModel ?? 'gpt-3.5-turbo'
   },
   set(value: CHAT_GPT_MODEL) {
     updateUserInfo({ aiAvatar: value })
@@ -141,30 +139,32 @@ function handleImportButtonClick(): void {
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.aiModel') }}</span>
         <div class="flex flex-wrap items-center gap-4">
           <NSelect
-            style="width: 180px" :value="aiModel" :options="chatGPTModelOptions"
-            @update-value="value => {
+            style="width: 180px" :value="aiModel" :options="chatGPTModelOptions" @update-value="value => {
               updateUserInfo({ aiModel: value })
             }"
           />
         </div>
       </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.systemMessage') }}</span>
+      <div :class="`${isMobile ? 'space-y-2' : 'flex items-center space-x-4'}`">
+        <span class="flex-shrink-0 w-[100px]">
+          {{ $t('setting.systemMessage') }}</span>
         <div class="flex-1">
-          <NInput v-model:value="systemMessage" type="textarea" placeholder="" rows="4" />
+          <NInput v-model:value="systemMessage" type="textarea" placeholder="" :rows="3" />
           <div class="dark:text-orange-200 text-orange-400">
             设置该项后，AI将会在任何对话中，一直扮演你在初始指令中所描述的"东西"😋
           </div>
         </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ systemMessage })">
-          {{ $t('common.save') }}
-        </NButton>
-        <NButton
-          size="tiny" text type="warning"
-          @click="() => { updateUserInfo({ systemMessage: DefaultSystemMessage }); systemMessage = DefaultSystemMessage }"
-        >
-          {{ $t('common.reset') }}
-        </NButton>
+        <div :class="`${isMobile && 'text-right'} space-x-3`">
+          <NButton size="tiny" :text="!isMobile" :tertiary="isMobile" type="primary" @click="updateUserInfo({ systemMessage })">
+            {{ $t('common.save') }}
+          </NButton>
+          <NButton
+            size="tiny" :text="!isMobile" :tertiary="isMobile" type="warning"
+            @click="() => { updateUserInfo({ systemMessage: DefaultSystemMessage }); systemMessage = DefaultSystemMessage }"
+          >
+            {{ $t('common.reset') }}
+          </NButton>
+        </div>
       </div>
       <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.avatarLink') }}</span>
@@ -175,7 +175,7 @@ function handleImportButtonClick(): void {
           {{ $t('common.save') }}
         </NButton>
       </div>
-      <div class="flex items-center space-x-4">
+      <!-- <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.gptAvatarLink') }}</span>
         <div class="flex-1">
           <NInput v-model:value="aiAvatar" placeholder="" />
@@ -183,7 +183,7 @@ function handleImportButtonClick(): void {
         <NButton size="tiny" text type="primary" @click="updateUserInfo({ aiAvatar })">
           {{ $t('common.save') }}
         </NButton>
-      </div>
+      </div> -->
       <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.name') }}</span>
         <div class="w-[200px]">
@@ -229,7 +229,10 @@ function handleImportButtonClick(): void {
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.theme') }}</span>
         <div class="flex flex-wrap items-center gap-4">
           <template v-for="item of themeOptions" :key="item.key">
-            <NButton size="small" :type="item.key === theme ? 'primary' : undefined" @click="appStore.setTheme(item.key)">
+            <NButton
+              size="small" :type="item.key === theme ? 'primary' : undefined"
+              @click="appStore.setTheme(item.key)"
+            >
               <template #icon>
                 <SvgIcon :icon="item.icon" />
               </template>

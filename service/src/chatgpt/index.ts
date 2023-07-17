@@ -7,6 +7,7 @@ import { ChatGPTAPI, ChatGPTUnofficialProxyAPI } from 'chatgpt'
 import { SocksProxyAgent } from 'socks-proxy-agent'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import fetch from 'node-fetch'
+import { GiftDecorator } from 'src/middleware/gift'
 import { sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
 import type { ApiModel, BalanceResponse, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
@@ -40,13 +41,9 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
   // More Info: https://github.com/transitive-bullshit/chatgpt-api
 
   if (process.env.OPENAI_API_KEY) {
-    const OPENAI_API_MODEL = process.env.OPENAI_API_MODEL
-    const model = isNotEmptyString(OPENAI_API_MODEL) ? OPENAI_API_MODEL : 'gpt-3.5-turbo'
-
     const options: ChatGPTAPIOptions = {
       maxModelTokens: 8000,
       apiKey: process.env.OPENAI_API_KEY,
-      completionParams: { model },
       debug: true,
     }
 
@@ -95,10 +92,10 @@ async function chatReplyProcess(
       completionParams: { model },
       systemMessage,
       onProgress: (partialResponse) => {
+        GiftDecorator(message, partialResponse)
         process?.(partialResponse)
       },
     })
-
     return sendResponse({ type: 'Success', data: response })
   }
   catch (error: any) {

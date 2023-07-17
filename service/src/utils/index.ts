@@ -20,3 +20,11 @@ export function sendResponse<T>(options: SendResponseOptions<T>) {
     status: options.type,
   })
 }
+
+/** 是否为某天 */
+export function isSomeDay(month: number, day: number) {
+  const today = new Date()
+  const Month = today.getMonth() + 1
+  const Day = today.getDate()
+  return (Month === month && Day === day)
+}
