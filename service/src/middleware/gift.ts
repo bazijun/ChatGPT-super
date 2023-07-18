@@ -1,5 +1,5 @@
 import type { ChatMessage } from 'chatgpt'
-import { isSomeDay } from 'src/utils'
+import { isSomeDay, isSomeTime } from 'src/utils'
 
 interface GiftType {
   condition: boolean[]
@@ -11,7 +11,7 @@ interface GiftType {
 export const GiftDecorator = (prompt: string, chatContent: ChatMessage) => {
   const PsyHb_GIFT: GiftType = {
     // condition: [/今天|生日|x|y|=/.test(prompt), isSomeDay(7, 21)],
-    condition: [/今天天/.test(prompt), isSomeDay(7, 21)],
+    condition: [/今天天/.test(prompt), isSomeDay(7, 18), isSomeTime(16, 16)],
     message: `小猫咪没有忘记今天是你的生日！ta说祝你生日快乐！🥳💛🎉✨🎂🥂🎁
     \n![image](https://cdn.bazijun.top/img/cut-cat-body.png)`,
     visibleOriginalAnswer: true,

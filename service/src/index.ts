@@ -25,14 +25,7 @@ router.post('/chat-process', auth, async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
 
   const today = moment(new Date()).utcOffset(8)
-  global.console.log('utc8.date ===>', today)
-  global.console.log('utc8.toDateString ===>', today.toDate().toDateString())
-  global.console.log('utc8.toLocaleDateString ===>', today.toDate().toLocaleDateString())
-  global.console.log('utc8.toLocaleString ===>', today.toDate().toLocaleString())
-  global.console.log('utc8.toLocaleTimeString ===>', today.toDate().toLocaleTimeString())
-  global.console.log('utc8.getMonth ===>', today.toDate().getMonth())
-  global.console.log('utc8.getDate ===>', today.toDate().getDate())
-  global.console.log('utc8.minute ===>', today.format('YYYY-MM-DD HH:mm:ss'))
+  global.console.log('utc8.thisTime ===>', today.month(), today.date(), today.hour(), today.minute())
 
   try {
     const { prompt, systemMessage, model = defaultModel, options = {} } = req.body as { prompt: string; model: string; systemMessage: string; options?: ChatContext }
