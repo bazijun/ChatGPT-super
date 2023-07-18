@@ -1,20 +1,26 @@
 import type { ChatMessage } from 'chatgpt'
-import { isSomeDay } from 'src/utils'
 
 interface GiftType {
   condition: boolean[]
   message: string
+  visibleOriginalAnswer?: boolean
 }
 
 /** 礼物装饰器 */
 export const GiftDecorator = (prompt: string, chatContent: ChatMessage) => {
   const PsyHb_GIFT: GiftType = {
-    condition: [prompt.includes('今天') || prompt.includes('生日'), isSomeDay(7, 21)],
-    message: '![image](https://cdn.bazijun.top/img/cut-cat-body.png)',
+    // condition: [/今天|生日|x|y|=/.test(prompt), isSomeDay(7, 21)],
+    condition: [/今天天/.test(prompt)],
+    message: `小猫咪没有忘记今天是你的生日！ta说祝你生日快乐！🥳💛🎉✨🎂🥂🎁
+    \n![image](https://cdn.bazijun.top/img/cut-cat-body.png)`,
+    visibleOriginalAnswer: true,
   }
   const postGift = (gift: GiftType) => {
-    if (!gift.condition.includes(false))
-      chatContent.text = gift.message
+    if (!gift.condition.includes(false)) {
+      const GiftBaseText = `${gift.message}\n\n---\n **\`原回答:\`** `
+      const OriginalAnswer = chatContent.text.replace(GiftBaseText, '')
+      chatContent.text = gift.visibleOriginalAnswer ? (GiftBaseText + OriginalAnswer) : gift.message
+    }
   }
   postGift(PsyHb_GIFT)
 }
