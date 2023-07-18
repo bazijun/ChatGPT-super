@@ -1,6 +1,5 @@
 import express from 'express'
 import pkg from 'package.json'
-import moment from 'moment'
 import type { ChatContext, ChatMessage } from './chatgpt'
 import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
@@ -23,10 +22,6 @@ router.post('/chat-process', auth, async (req, res) => {
   const OPENAI_API_MODEL = process.env.OPENAI_API_MODEL
   const defaultModel = isNotEmptyString(OPENAI_API_MODEL) ? OPENAI_API_MODEL : 'gpt-3.5-turbo'
   res.setHeader('Content-type', 'application/octet-stream')
-
-  const today = moment(new Date()).utcOffset(8)
-  global.console.log('utc8.thisTime ===>', today.month(), today.date(), today.hour(), today.minute())
-
   try {
     const { prompt, systemMessage, model = defaultModel, options = {} } = req.body as { prompt: string; model: string; systemMessage: string; options?: ChatContext }
     let firstChunk = true
