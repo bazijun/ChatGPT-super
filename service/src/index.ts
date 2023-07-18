@@ -25,13 +25,10 @@ router.post('/chat-process', auth, async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
 
   const today = moment(new Date()).utcOffset(8)
-  const todayMoment = moment().toDate()
-  global.console.log('this.Moment ===>', todayMoment)
-  global.console.log('this.Moment.getDate ===>', todayMoment.getDate())
-  global.console.log('this.Moment.toLocaleString ===>', todayMoment.toLocaleString())
-  global.console.log('this.Moment.toLocaleDateString ===>', todayMoment.toLocaleDateString())
   global.console.log('utc8.date ===>', today)
   global.console.log('utc8.time ===>', today.toDate().toDateString())
+  global.console.log('utc8.getMonth ===>', today.toDate().getMonth())
+  global.console.log('utc8.getDate ===>', today.toDate().getDate())
   global.console.log('utc8.minute ===>', today.format('YYYY-MM-DD HH:mm:ss'))
 
   try {
