@@ -78,4 +78,4 @@ router.post('/verify', async (req, res) => {
 app.use('', router)
 app.use('/api', router)
 
-app.listen(3002, () => globalThis.console.log(`Server:${pkg.version} is running on port 3002`))
+app.listen(3002, () => globalThis.console.log(`【Server:${pkg.version} is running on port 3002】`))
