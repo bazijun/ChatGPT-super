@@ -12,7 +12,7 @@ import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useChatStore, usePromptPassStore, usePromptStore, useUserStore } from '@/store'
+import { useChatStore, usePromptPassStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
 
@@ -26,7 +26,6 @@ const ms = useMessage()
 
 const chatStore = useChatStore()
 const promptPassStore = usePromptPassStore()
-const userStore = useUserStore()
 
 useCopyCode()
 
@@ -448,8 +447,6 @@ const footerClass = computed(() => {
 
 onMounted(() => {
   scrollToBottom()
-  // Init App
-  userStore.updateUserInfo({ aiAvatar: 'https://cdn.bazijun.top/img/cut-cat1.png', aiModel: 'gpt-3.5-turbo' })
 })
 
 onUnmounted(() => {

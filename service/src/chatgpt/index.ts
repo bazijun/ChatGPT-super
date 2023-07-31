@@ -22,8 +22,9 @@ const ErrorCodeMessage: Record<string, string> = {
 }
 
 const localEnvPath = path.resolve(__dirname, '../../.env.local')
+const isDevelopment = fs.existsSync(localEnvPath)
 
-if (fs.existsSync(localEnvPath))
+if (isDevelopment)
   dotenv.config({ path: localEnvPath })
 else
   dotenv.config()
@@ -44,7 +45,7 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
     const options: ChatGPTAPIOptions = {
       maxModelTokens: 8000,
       apiKey: process.env.OPENAI_API_KEY,
-      debug: true,
+      debug: isDevelopment,
     }
 
     if (isNotEmptyString(process.env.OPENAI_API_BASE_URL))
@@ -58,7 +59,7 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
   else {
     const options: ChatGPTUnofficialProxyAPIOptions = {
       accessToken: process.env.OPENAI_ACCESS_TOKEN,
-      debug: true,
+      debug: isDevelopment,
     }
 
     if (isNotEmptyString(process.env.API_REVERSE_PROXY))
@@ -96,11 +97,12 @@ async function chatReplyProcess(
         process?.(partialResponse)
       },
     })
+    !isDevelopment && global.console.log('[response]==>', response?.detail)
     return sendResponse({ type: 'Success', data: response })
   }
   catch (error: any) {
     const code = error.statusCode
-    global.console.log(error)
+    global.console.log('[error]==>', error)
     if (Reflect.has(ErrorCodeMessage, code))
       return sendResponse({ type: 'Fail', message: ErrorCodeMessage[code] })
     return sendResponse({ type: 'Fail', message: error.message ?? 'Please check the back-end console' })
