@@ -8,6 +8,7 @@ import { SocksProxyAgent } from 'socks-proxy-agent'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import fetch from 'node-fetch'
 import { GiftDecorator } from 'src/middleware/gift'
+import moment from 'moment'
 import { sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
 import type { ApiModel, BalanceResponse, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
@@ -97,7 +98,10 @@ async function chatReplyProcess(
         process?.(partialResponse)
       },
     })
-    !isDevelopment && global.console.log('[response]==>', response?.detail)
+    !isDevelopment && global.console.log('[Logger]==>',
+      Object.assign(response?.detail ?? {}, {
+        time: moment(new Date()).utcOffset(8).format('YYYY-MM-DD HH:mm'),
+      }))
     return sendResponse({ type: 'Success', data: response })
   }
   catch (error: any) {
