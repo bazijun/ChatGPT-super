@@ -6,6 +6,16 @@ interface SendResponseOptions<T = any> {
   data?: T
 }
 
+export function formatDate(): string[] {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = today.getMonth() + 1
+  const lastDay = new Date(year, month, 0)
+  const formattedFirstDay = `${year}-${month.toString().padStart(2, '0')}-01`
+  const formattedLastDay = `${year}-${month.toString().padStart(2, '0')}-${lastDay.getDate().toString().padStart(2, '0')}`
+  return [formattedFirstDay, formattedLastDay]
+}
+
 export function sendResponse<T>(options: SendResponseOptions<T>) {
   if (options.type === 'Success') {
     return Promise.resolve({

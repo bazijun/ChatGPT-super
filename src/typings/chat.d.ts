@@ -8,6 +8,8 @@ declare namespace Chat {
 		loading?: boolean
 		conversationOptions?: ConversationRequest | null
 		requestOptions: { prompt: string; options?: ConversationRequest | null }
+        model?: string
+        usage?: Partial<{ completion_tokens: number; prompt_tokens: number; total_tokens: number }>
 	}
 
 	interface History {

@@ -1,9 +1,10 @@
 import express from 'express'
 import pkg from 'package.json'
-import type { ChatContext, ChatMessage } from './chatgpt'
+import type { ChatMessage } from './chatgpt'
 import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
 import { isNotEmptyString } from './utils/is'
+import type { chatReplyRequest } from './types'
 
 const app = express()
 const router = express.Router()
@@ -18,17 +19,26 @@ app.all('*', (_, res, next) => {
   next()
 })
 
-router.post('/chat-process', auth, async (req, res) => {
+router.post<any, any, any, chatReplyRequest>('/chat-process', auth, async (req, res) => {
   const OPENAI_API_MODEL = process.env.OPENAI_API_MODEL
   const defaultModel = isNotEmptyString(OPENAI_API_MODEL) ? OPENAI_API_MODEL : 'gpt-3.5-turbo'
   res.setHeader('Content-type', 'application/octet-stream')
   try {
-    const { prompt, systemMessage, model = defaultModel, options = {} } = req.body as { prompt: string; model: string; systemMessage: string; options?: ChatContext }
+    const { prompt, systemMessage, maxModelTokens, model = defaultModel, options = {} } = req.body
     let firstChunk = true
-    await chatReplyProcess(prompt, systemMessage, model, options, (chat: ChatMessage) => {
-      res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
-      firstChunk = false
+    const result = await chatReplyProcess({
+      model,
+      message: prompt,
+      systemMessage,
+      maxModelTokens,
+      lastContext: options,
+      process: (chat: ChatMessage) => {
+        res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
+        firstChunk = false
+      },
     })
+    // 需要 添加 \n 前端才能正确获取到
+    res.write(`\n${JSON.stringify(result.data)}`)
   }
   catch (error) {
     res.write(JSON.stringify(error))

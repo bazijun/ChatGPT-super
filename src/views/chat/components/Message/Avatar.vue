@@ -2,27 +2,22 @@
 import { computed } from 'vue'
 import { NAvatar } from 'naive-ui'
 import { useUserStore } from '@/store'
-import { isString } from '@/utils/is'
-import defaultAvatar from '@/assets/avatar.jpg'
-import defaultAIAvatar from '@/assets/gpt.jpg'
+import { DEFAULT_USER_INFO } from '@/store/modules/user/helper'
 
 interface Props {
   image?: boolean
 }
 defineProps<Props>()
 const userStore = useUserStore()
-
-const avatar = computed(() => userStore.userInfo.avatar)
-const aiAvatar = computed(() => userStore.userInfo.aiAvatar)
+const avatar = computed(() => userStore.userInfo.avatar ?? DEFAULT_USER_INFO.avatar)
+const aiAvatar = computed(() => userStore.userInfo.aiAvatar ?? DEFAULT_USER_INFO.aiAvatar)
 </script>
 
 <template>
   <template v-if="image">
-    <NAvatar v-if="isString(avatar) && avatar.length > 0" :src="avatar" :fallback-src="defaultAvatar" :size="48" />
-    <NAvatar v-else :src="defaultAvatar" :size="48" />
+    <NAvatar :src="avatar" :fallback-src="DEFAULT_USER_INFO.avatar" :size="48" />
   </template>
   <template v-else>
-    <NAvatar v-if="isString(aiAvatar) && aiAvatar.length > 0" :src="aiAvatar" :fallback-src="defaultAIAvatar" :size="48" />
-    <NAvatar v-else :src="defaultAIAvatar" :size="48" />
+    <NAvatar :src="aiAvatar" :fallback-src="DEFAULT_USER_INFO.aiAvatar" :size="48" />
   </template>
 </template>

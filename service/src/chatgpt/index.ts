@@ -3,15 +3,15 @@ import path from 'path'
 import * as dotenv from 'dotenv'
 import 'isomorphic-fetch'
 import type { ChatGPTAPIOptions, ChatMessage, SendMessageOptions } from 'chatgpt'
-import { ChatGPTAPI, ChatGPTUnofficialProxyAPI } from 'chatgpt'
 import { SocksProxyAgent } from 'socks-proxy-agent'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import fetch from 'node-fetch'
 import { GiftDecorator } from 'src/middleware/gift'
 import moment from 'moment'
-import { sendResponse } from '../utils'
+import { formatDate, sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
-import type { ApiModel, BalanceResponse, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
+import type { ApiModel, BalanceResponse, ChatContext, ModelConfig, chatReplyOptions } from '../types'
+import { ChatGPTApiSuper } from './super'
 
 const ErrorCodeMessage: Record<string, string> = {
   401: '[OpenAI] 提供错误的API密钥 | Incorrect API key provided',
@@ -34,55 +34,41 @@ const timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT
 
 let apiModel: ApiModel
 
-if (!process.env.OPENAI_API_KEY && !process.env.OPENAI_ACCESS_TOKEN)
+if (!process.env.OPENAI_API_KEY)
   throw new Error('Missing OPENAI_API_KEY or OPENAI_ACCESS_TOKEN environment variable')
 
-let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
+let api: ChatGPTApiSuper
 
 (async () => {
   // More Info: https://github.com/transitive-bullshit/chatgpt-api
-
-  if (process.env.OPENAI_API_KEY) {
-    const options: ChatGPTAPIOptions = {
-      maxModelTokens: 8000,
-      apiKey: process.env.OPENAI_API_KEY,
-      debug: isDevelopment,
-    }
-
-    if (isNotEmptyString(process.env.OPENAI_API_BASE_URL))
-      options.apiBaseUrl = process.env.OPENAI_API_BASE_URL
-
-    setupProxy(options)
-
-    api = new ChatGPTAPI({ ...options })
-    apiModel = 'ChatGPTAPI'
+  const options: ChatGPTAPIOptions = {
+    apiKey: process.env.OPENAI_API_KEY,
+    debug: isDevelopment,
   }
-  else {
-    const options: ChatGPTUnofficialProxyAPIOptions = {
-      accessToken: process.env.OPENAI_ACCESS_TOKEN,
-      debug: isDevelopment,
-    }
 
-    if (isNotEmptyString(process.env.API_REVERSE_PROXY))
-      options.apiReverseProxyUrl = process.env.API_REVERSE_PROXY
+  if (isNotEmptyString(process.env.OPENAI_API_BASE_URL))
+    options.apiBaseUrl = process.env.OPENAI_API_BASE_URL
 
-    setupProxy(options)
+  setupProxy(options)
 
-    api = new ChatGPTUnofficialProxyAPI({ ...options })
-    apiModel = 'ChatGPTUnofficialProxyAPI'
-  }
+  api = new ChatGPTApiSuper({ ...options })
+  apiModel = 'ChatGPTAPI'
 })()
 
-async function chatReplyProcess(
-  message: string,
-  systemMessage?: string,
-  model?: string,
-  lastContext?: { conversationId?: string; parentMessageId?: string },
-  process?: (chat: ChatMessage) => void,
+async function chatReplyProcess(opt: chatReplyOptions,
 ) {
   try {
+    const {
+      message,
+      systemMessage,
+      model,
+      lastContext,
+      maxModelTokens,
+      process,
+    } = opt
     let options: SendMessageOptions = { timeoutMs }
-
+    if (maxModelTokens)
+      api.maxModelTokens = maxModelTokens
     if (lastContext) {
       if (apiModel === 'ChatGPTAPI')
         options = { parentMessageId: lastContext.parentMessageId }
@@ -150,7 +136,8 @@ async function chatConfig() {
   })
 }
 
-function setupProxy(options: ChatGPTAPIOptions | ChatGPTUnofficialProxyAPIOptions) {
+// 设置代理 (未使用)
+function setupProxy(options: ChatGPTAPIOptions) {
   if (process.env.SOCKS_PROXY_HOST && process.env.SOCKS_PROXY_PORT) {
     const agent = new SocksProxyAgent({
       hostname: process.env.SOCKS_PROXY_HOST,
@@ -175,16 +162,6 @@ function setupProxy(options: ChatGPTAPIOptions | ChatGPTUnofficialProxyAPIOption
 
 function currentModel(): ApiModel {
   return apiModel
-}
-
-function formatDate(): string[] {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = today.getMonth() + 1
-  const lastDay = new Date(year, month, 0)
-  const formattedFirstDay = `${year}-${month.toString().padStart(2, '0')}-01`
-  const formattedLastDay = `${year}-${month.toString().padStart(2, '0')}-${lastDay.getDate().toString().padStart(2, '0')}`
-  return [formattedFirstDay, formattedLastDay]
 }
 
 export type { ChatContext, ChatMessage }

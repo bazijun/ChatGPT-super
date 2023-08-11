@@ -1,10 +1,23 @@
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios'
 import { post } from '@/utils/request'
-import { getLocalState } from '@/store/modules/user/helper'
+import { chatGPTModelOptions, getLocalState } from '@/store/modules/user/helper'
+
+interface ChatContext {
+  conversationId?: string
+  parentMessageId?: string
+}
+
+interface chatReplyRequest {
+  prompt: string
+  systemMessage: string
+  model?: string
+  maxModelTokens?: number
+  options?: ChatContext
+}
 
 export function fetchChatAPI<T = any>(
   prompt: string,
-  options?: { conversationId?: string; parentMessageId?: string },
+  options?: ChatContext,
   signal?: GenericAbortSignal,
 ) {
   return post<T>({
@@ -23,15 +36,23 @@ export function fetchChatConfig<T = any>() {
 export function fetchChatAPIProcess<T = any>(
   params: {
     prompt: string
-    options?: { conversationId?: string; parentMessageId?: string }
+    options?: ChatContext
     signal?: GenericAbortSignal
     onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void
   },
 ) {
   const { userInfo } = getLocalState()
+  const { systemMessage, aiModel } = userInfo
+  const maxModelTokens = chatGPTModelOptions.find(f => f.value === aiModel)?.tokens
   return post<T>({
     url: '/chat-process',
-    data: { prompt: params.prompt, systemMessage: userInfo.systemMessage, model: userInfo.aiModel, options: params.options },
+    data: {
+      systemMessage,
+      maxModelTokens,
+      model: aiModel,
+      prompt: params.prompt,
+      options: params.options,
+    } as chatReplyRequest,
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,
   })

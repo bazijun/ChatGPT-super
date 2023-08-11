@@ -1,16 +1,20 @@
 <script setup lang='ts'>
-import { ref } from 'vue'
-import { NDropdown } from 'naive-ui'
+import { computed, ref } from 'vue'
+import { NBadge, NDropdown } from 'naive-ui'
 import AvatarComponent from './Avatar.vue'
 import TextComponent from './Text.vue'
 import { SvgIcon } from '@/components/common'
 import { copyText } from '@/utils/format'
 import { useIconRender } from '@/hooks/useIconRender'
 import { t } from '@/locales'
+import { chatGPTModelOptions } from '@/store/modules/user/helper'
+import { useUsingContext } from '@/views/chat/hooks/useUsingContext'
 
 interface Props {
   dateTime?: string
   text?: string
+  model?: string
+  usage?: Chat.Chat['usage']
   inversion?: boolean
   error?: boolean
   loading?: boolean
@@ -27,6 +31,8 @@ const emit = defineEmits<Emit>()
 
 const { iconRender } = useIconRender()
 
+const { usingContext, toggleUsingContext } = useUsingContext()
+
 const textRef = ref<HTMLElement>()
 
 const options = [
@@ -42,6 +48,13 @@ const options = [
   },
 ]
 
+const chatStatistics = computed(() => {
+  if (!props.model)
+    return ''
+  const maxTokens = chatGPTModelOptions.find(f => f.value === props.model)?.tokens ?? 4000
+  return `${props.model} / ${maxTokens} / ${props.usage?.total_tokens}`
+})
+
 function handleSelect(key: 'copyRaw' | 'copyText' | 'delete') {
   switch (key) {
     case 'copyText':
@@ -52,6 +65,11 @@ function handleSelect(key: 'copyRaw' | 'copyText' | 'delete') {
   }
 }
 
+function handleUsingContext(e: MouseEvent) {
+  e.preventDefault()
+  !props.inversion && toggleUsingContext()
+}
+
 function handleRegenerate() {
   emit('regenerate')
 }
@@ -59,27 +77,23 @@ function handleRegenerate() {
 
 <template>
   <div class="flex w-full mb-6 overflow-hidden" :class="[{ 'flex-row-reverse': inversion }]">
-    <div
-      class="flex items-center justify-center flex-shrink-0 h-12 w-12 overflow-hidden rounded-full basis-12"
-      :class="[inversion ? 'ml-2' : 'mr-2']"
+    <NBadge
+      dot :type="usingContext ? 'success' : 'error'" :offset="[-14, 8]" :show="!inversion" class="cursor-pointer"
+      @click="handleUsingContext"
     >
-      <AvatarComponent :image="inversion" />
-    </div>
+      <div
+        class="flex items-center justify-center flex-shrink-0 h-12 w-12 overflow-hidden rounded-full basis-12"
+        :class="[inversion ? 'ml-2' : 'mr-2']"
+      >
+        <AvatarComponent :image="inversion" />
+      </div>
+    </NBadge>
     <div class="overflow-hidden text-sm " :class="[inversion ? 'items-end' : 'items-start']">
       <p class="text-xs text-[#b4bbc4]" :class="[inversion ? 'text-right' : 'text-left']">
         {{ dateTime }}
       </p>
-      <div
-        class="flex items-end gap-1 mt-2"
-        :class="[inversion ? 'flex-row-reverse' : 'flex-row']"
-      >
-        <TextComponent
-          ref="textRef"
-          :inversion="inversion"
-          :error="error"
-          :text="text"
-          :loading="loading"
-        />
+      <div class="flex items-end gap-1 mt-2" :class="[inversion ? 'flex-row-reverse' : 'flex-row']">
+        <TextComponent ref="textRef" :inversion="inversion" :error="error" :text="text" :loading="loading" />
         <div class="flex flex-col">
           <button
             v-if="!inversion"
@@ -95,6 +109,9 @@ function handleRegenerate() {
           </NDropdown>
         </div>
       </div>
+      <p v-if="!inversion && usage?.total_tokens !== undefined" class="text-xs mt-1 text-[#b4bbc4] text-left">
+        {{ chatStatistics }}
+      </p>
     </div>
   </div>
 </template>

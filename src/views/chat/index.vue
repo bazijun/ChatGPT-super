@@ -10,11 +10,12 @@ import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
 import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
-import { HoverButton, SvgIcon } from '@/components/common'
+import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptPassStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
+import { getLocalState } from '@/store/modules/user/helper'
 
 let controller = new AbortController()
 
@@ -38,6 +39,7 @@ const { uuid } = route.params as { uuid: string }
 
 const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
 const conversationList = computed(() => dataSources.value.filter(item => (!item.inversion && !item.error)))
+const emptyConversationList = computed(() => !conversationList.value?.length)
 const promptPass = computed(() => promptPassStore.promptPass)
 
 const prompt = ref<string>('')
@@ -115,7 +117,8 @@ async function onConversation() {
           if (lastIndex !== -1)
             chunk = responseText.substring(lastIndex)
           try {
-            const data = JSON.parse(chunk)
+            const data = JSON.parse(chunk) as Chat.ConversationResponse
+            const { userInfo } = getLocalState()
             updateChat(
               +uuid,
               dataSources.value.length - 1,
@@ -125,6 +128,8 @@ async function onConversation() {
                 inversion: false,
                 error: false,
                 loading: false,
+                model: userInfo.aiModel,
+                usage: data?.detail?.usage,
                 conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
                 requestOptions: { prompt: message, options: { ...options } },
               },
@@ -245,7 +250,8 @@ async function onRegenerate(index: number) {
           if (lastIndex !== -1)
             chunk = responseText.substring(lastIndex)
           try {
-            const data = JSON.parse(chunk)
+            const data = JSON.parse(chunk) as Chat.ConversationResponse
+            const { userInfo } = getLocalState()
             updateChat(
               +uuid,
               index,
@@ -255,6 +261,8 @@ async function onRegenerate(index: number) {
                 inversion: false,
                 error: false,
                 loading: false,
+                model: userInfo.aiModel,
+                usage: data?.detail?.usage,
                 conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
                 requestOptions: { prompt: message, ...options },
               },
@@ -380,6 +388,10 @@ function handleClear() {
   })
 }
 
+function handleAdd() {
+  chatStore.addHistory({ title: 'New Chat', uuid: Date.now(), isEdit: false })
+}
+
 function handleEnter(event: KeyboardEvent) {
   if (!isMobile.value) {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -458,10 +470,10 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col w-full h-full">
     <HeaderComponent
-      v-if="isMobile" :using-context="usingContext" @export="handleExport"
-      @toggle-using-context="toggleUsingContext"
+      :using-context="usingContext" @export="handleExport" @toggle-using-context="toggleUsingContext"
+      @handle-clear="handleClear"
     />
-    <main class="flex-1 overflow-hidden">
+    <main class="flex-1 overflow-hidden mt-3">
       <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto">
         <div
           id="image-wrapper" class="w-full max-w-screen-xl m-auto dark:bg-[#101014]"
@@ -476,8 +488,8 @@ onUnmounted(() => {
           <template v-else>
             <div>
               <Message
-                v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime"
-                :text="item.text" :inversion="item.inversion" :error="item.error" :loading="item.loading"
+                v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :model="item.model"
+                :text="item.text" :inversion="item.inversion" :error="item.error" :loading="item.loading" :usage="item.usage"
                 @regenerate="onRegenerate(index)" @delete="handleDelete(index)"
               />
               <div class="sticky bottom-0 left-0 flex justify-center">
@@ -496,21 +508,13 @@ onUnmounted(() => {
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="flex items-center justify-between space-x-2">
-          <HoverButton @click="handleClear">
-            <span class="text-xl text-[#4f555e] dark:text-white">
-              <SvgIcon icon="ri:delete-bin-line" />
-            </span>
-          </HoverButton>
-          <HoverButton v-if="!isMobile" @click="handleExport">
-            <span class="text-xl text-[#4f555e] dark:text-white">
-              <SvgIcon icon="ri:download-2-line" />
-            </span>
-          </HoverButton>
-          <HoverButton v-if="!isMobile" @click="toggleUsingContext">
-            <span class="text-xl" :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }">
-              <SvgIcon icon="ri:chat-history-line" />
-            </span>
-          </HoverButton>
+          <NButton type="primary" :circle="isMobile" :quaternary="isMobile" :dashed="!isMobile" :disabled="emptyConversationList" @click="handleAdd">
+            <template #icon>
+              <span class="text-xl text-[#4b9e5f] dark:text-[#63E2B7]">
+                <SvgIcon icon="akar-icons:chat-add" />
+              </span>
+            </template>
+          </NButton>
           <NAutoComplete v-model:value="prompt" :options="searchOptions" :render-label="renderOption">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <NInput

@@ -3,7 +3,7 @@ import { useMessage } from 'naive-ui'
 import { t } from '@/locales'
 import { useChatStore } from '@/store'
 
-export function useUsingContext() {
+export function useUsingContext(isMessage = true) {
   const ms = useMessage()
   const chatStore = useChatStore()
   const usingContext = computed<boolean>(() => chatStore.usingContext)
@@ -11,9 +11,9 @@ export function useUsingContext() {
   function toggleUsingContext() {
     chatStore.setUsingContext(!usingContext.value)
     if (usingContext.value)
-      ms.success(t('chat.turnOnContext'))
+      isMessage && ms.success(t('chat.turnOnContext'))
     else
-      ms.warning(t('chat.turnOffContext'))
+      isMessage && ms.warning(t('chat.turnOffContext'))
   }
 
   return {

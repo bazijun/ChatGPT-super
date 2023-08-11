@@ -1,4 +1,4 @@
-import type { FetchFn } from 'chatgpt'
+import type { ChatMessage, FetchFn } from 'chatgpt'
 
 export interface ChatContext {
   conversationId?: string
@@ -21,6 +21,23 @@ export interface ModelConfig {
   socksProxy?: string
   httpsProxy?: string
   balance?: string
+}
+
+export interface chatReplyOptions {
+  message: string
+  systemMessage?: string
+  maxModelTokens?: number
+  model?: string
+  lastContext?: { conversationId?: string; parentMessageId?: string }
+  process?: (chat: ChatMessage) => void
+}
+
+export interface chatReplyRequest {
+  prompt: string
+  systemMessage: string
+  model?: string
+  maxModelTokens?: number
+  options?: ChatContext
 }
 
 export interface BalanceResponse {
