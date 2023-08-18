@@ -1,16 +1,19 @@
 <script setup lang='ts'>
-import { computed } from 'vue'
 import { NInput, NPopconfirm, NScrollbar } from 'naive-ui'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 
+interface Props {
+  dataSources?: Chat.History[]
+}
+
+defineProps<Props>()
+
 const { isMobile } = useBasicLayout()
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
-
-const dataSources = computed(() => chatStore.history)
 
 async function handleSelect({ uuid }: Chat.History) {
   if (isActive(uuid))
@@ -48,7 +51,7 @@ function isActive(uuid: number) {
 <template>
   <NScrollbar class="px-4">
     <div class="flex flex-col gap-2 text-sm">
-      <template v-if="!dataSources.length">
+      <template v-if="!dataSources?.length">
         <div class="flex flex-col items-center mt-4 text-center text-neutral-300">
           <SvgIcon icon="ri:inbox-line" class="mb-2 text-3xl" />
           <span>{{ $t('common.noData') }}</span>
@@ -66,14 +69,12 @@ function isActive(uuid: number) {
             </span>
             <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap">
               <NInput
-                v-if="item.isEdit"
-                v-model:value="item.title"
-                size="tiny"
+                v-if="item.isEdit" v-model:value="item.title" size="tiny"
                 @keypress="handleEnter(item, false, $event)"
               />
               <span v-else>{{ item.title }}</span>
             </div>
-            <div v-if="isActive(item.uuid)" class="absolute z-10 flex visible right-1">
+            <div class="absolute z-10 right-1 group-hover:flex" :class="[isActive(item.uuid) ? 'flex' : 'hidden']">
               <template v-if="item.isEdit">
                 <button class="p-1" @click="handleEdit(item, false, $event)">
                   <SvgIcon icon="ri:save-line" />
