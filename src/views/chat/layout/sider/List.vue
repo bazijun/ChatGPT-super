@@ -60,7 +60,7 @@ function isActive(uuid: number) {
       <template v-else>
         <div v-for="(item, index) of dataSources" :key="index">
           <a
-            class="relative flex items-center gap-3 px-3 py-3 break-all border rounded-md cursor-pointer hover:bg-neutral-100 group dark:border-neutral-800 dark:hover:bg-[#24272e]"
+            class="relative flex items-center gap-3 px-3 py-3 break-all border rounded-md cursor-pointer hover:pr-14 hover:bg-neutral-100 group dark:border-neutral-800 dark:hover:bg-[#24272e]"
             :class="isActive(item.uuid) && ['border-[#4b9e5f]', 'bg-neutral-100', 'text-[#4b9e5f]', 'dark:bg-[#24272e]', 'dark:border-[#4b9e5f]', 'pr-14']"
             @click="handleSelect(item)"
           >
@@ -76,17 +76,17 @@ function isActive(uuid: number) {
             </div>
             <div class="absolute z-10 right-1 group-hover:flex" :class="[isActive(item.uuid) ? 'flex' : 'hidden']">
               <template v-if="item.isEdit">
-                <button class="p-1" @click="handleEdit(item, false, $event)">
+                <button class="p-1 hover:text-[#4b9e5f]" @click="handleEdit(item, false, $event)">
                   <SvgIcon icon="ri:save-line" />
                 </button>
               </template>
               <template v-else>
-                <button class="p-1">
+                <button class="p-1 hover:text-[#4b9e5f]">
                   <SvgIcon icon="ri:edit-line" @click="handleEdit(item, true, $event)" />
                 </button>
                 <NPopconfirm placement="bottom" @positive-click="handleDelete(index, $event)">
                   <template #trigger>
-                    <button class="p-1">
+                    <button class="p-1 hover:text-[#4b9e5f]">
                       <SvgIcon icon="ri:delete-bin-line" />
                     </button>
                   </template>

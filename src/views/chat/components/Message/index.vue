@@ -78,11 +78,11 @@ function handleRegenerate() {
 <template>
   <div class="flex w-full mb-6 overflow-hidden" :class="[{ 'flex-row-reverse': inversion }]">
     <NBadge
-      dot :type="usingContext ? 'success' : 'error'" :offset="[-14, 8]" :show="!inversion" class="cursor-pointer"
+      dot :type="usingContext ? 'success' : 'error'" :offset="[-14, 8]" :show="!inversion"
     >
       <div
         class="flex items-center justify-center flex-shrink-0 h-12 w-12 overflow-hidden rounded-full basis-12"
-        :class="[inversion ? 'ml-2' : 'mr-2']"
+        :class="[inversion ? 'ml-2' : 'mr-2 cursor-pointer']"
       >
         <AvatarComponent :image="inversion" @click="handleUsingContext" />
       </div>
