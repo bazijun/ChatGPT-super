@@ -19,7 +19,7 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   (response: AxiosResponse): AxiosResponse => {
-    if (response.status === 200)
+    if (response.status >= 200 || response.status < 400)
       return response
 
     throw new Error(response.status.toString())
