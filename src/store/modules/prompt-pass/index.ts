@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { PromptPassStore } from './helper'
 import { getLocalPromptPass, setLocalPromptPass } from './helper'
 
+/** @deprecated */
 export const usePromptPassStore = defineStore('prompt-pass-store', {
   state: (): PromptPassStore => getLocalPromptPass(),
 

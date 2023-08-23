@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { ConfigModule } from '@nestjs/config';
-import { ChatgptModule } from './chatgpt/chatgpt.module';
-import { isDevelopment } from './util/is';
+import { Module } from "@nestjs/common";
+import { AppController } from "./app.controller";
+import { ConfigModule } from "@nestjs/config";
+import { ChatgptModule } from "./chatgpt/chatgpt.module";
+import { isDevelopment } from "./util/is";
 
 @Module({
 	imports: [

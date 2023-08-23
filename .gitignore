@@ -27,5 +27,7 @@ coverage
 *.sln
 *.sw?
 
+/service-nest/dist
+
 # Environment variables files
 # /service/.env

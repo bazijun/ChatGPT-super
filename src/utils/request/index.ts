@@ -36,9 +36,9 @@ function http<T = any>(
     return Promise.reject(res.data)
   }
 
-  const failHandler = (error: Response<Error>) => {
+  const failHandler = (error: Response<any> | any) => {
     afterRequest?.()
-    throw new Error(error?.message || 'Error')
+    throw new Error(error?.response?.data?.message ?? error?.message ?? 'Error')
   }
 
   beforeRequest?.()

@@ -64,7 +64,7 @@ function handlePress(event: KeyboardEvent) {
           </p>
           <Icon403 class="w-[200px] m-auto" />
         </header>
-        <NInput v-model:value="token" type="password" placeholder="" @keypress="handlePress" />
+        <NInput v-model:value="token" type="password" placeholder="请输入管理员提供的授权码" @keypress="handlePress" />
         <NButton
           block
           type="primary"

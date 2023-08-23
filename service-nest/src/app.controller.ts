@@ -4,32 +4,19 @@ import {
 	HttpException,
 	HttpStatus,
 	Post,
-} from '@nestjs/common';
-import { isNotEmptyString } from './util/is';
-import { ChatgptService } from './chatgpt/chatgpt.service';
-import { ConfigService } from '@nestjs/config';
+} from "@nestjs/common";
+import { ChatgptService } from "./chatgpt/chatgpt.service";
 
 @Controller()
 export class AppController {
-	constructor(
-		private readonly chatgptService: ChatgptService,
-		private readonly config: ConfigService,
-	) {}
+	constructor(private readonly chatgptService: ChatgptService) {}
 
-	@Post('session')
-	session(): {
-		status: string;
-		message: string;
-		data: {
-			auth: boolean;
-			model: import('d:/1workspace/my-project/ChatGPT-super/service-nest/src/chatgpt/type').ApiModel;
-		};
-	} {
-		const AUTH_SECRET_KEY = this.config.get('AUTH_SECRET_KEY');
-		const hasAuth = isNotEmptyString(AUTH_SECRET_KEY);
+	@Post("session")
+	session() {
+		const hasAuth = true;
 		return {
-			status: 'Success',
-			message: '',
+			status: "Success",
+			message: "",
 			data: {
 				auth: hasAuth,
 				model: this.chatgptService.apiModel,
@@ -37,21 +24,16 @@ export class AppController {
 		};
 	}
 
-	@Post('verify')
+	@Post("verify")
 	verify(@Body() body: { token: string }) {
 		const { token } = body;
+		const TokenList = ["bzj", "psy", "nn", "zzl"];
 		if (!token)
-			throw new HttpException(
-				'token不能为空 | Secret key is empty',
-				HttpStatus.UNAUTHORIZED,
-			);
+			throw new HttpException("授权码不能为空", HttpStatus.UNAUTHORIZED);
 
-		if (this.config.get('AUTH_SECRET_KEY') !== token)
-			throw new HttpException(
-				'token无效 | Secret key is invalid',
-				HttpStatus.FORBIDDEN,
-			);
+		if (!TokenList.includes(token))
+			throw new HttpException("授权码无效，请联系管理员", HttpStatus.FORBIDDEN);
 
-		return { status: 'Success', message: 'Verify successfully', data: null };
+		return { status: "Success", message: "Verify successfully", data: null };
 	}
 }
