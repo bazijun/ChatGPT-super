@@ -13,7 +13,7 @@ exposePort="9527"
 cd ..
 
 echo "--> docker build"
-sudo docker build -t "$imageName":"$version" .
-sudo docker rm -f "$containerName" || echo 'continue'
-sudo docker run -d -p "$port":"$exposePort" --privileged --restart=always --name "$containerName" "$imageName":"$version"
-sudo docker rmi "$imageName":"$version"
+docker build -t "$imageName":"$version" .
+docker rm -f "$containerName" || echo 'continue'
+docker run -d -p "$port":"$exposePort" --privileged --restart=always --name "$containerName" "$imageName":"$version"
+docker rmi "$imageName":"$version"
