@@ -18,5 +18,5 @@ if [ "$(docker ps -aq -f name=$container_name)" ]; then
     # Cleanup container
     docker rm -f "$containerName" || echo 'continue'
 fi
-docker run -d -p "$port":"$exposePort" --privileged --restart=always --name "$containerName" "$imageName":"$version"
-docker rmi "$imageName":"$version"
+docker run -d -p "$port":"$exposePort" --restart=always --name "$containerName" "$imageName":"$version"
+docker rmi -f "$imageName":"$version"
