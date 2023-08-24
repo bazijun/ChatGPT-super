@@ -16,13 +16,14 @@ RUN npm run build
 # production stage
 FROM node:18.0-alpine3.14 as production-stage
 
-COPY --from=build-stage /app/dist /app
 COPY --from=build-stage /app/package.json /app/package.json
+RUN npm install --production
+
+COPY --from=build-stage /app/dist /app
 COPY --from=build-stage /app/.env /app/.env
 
 WORKDIR /app
 
-RUN npm install --production
 
 EXPOSE 9527
 
