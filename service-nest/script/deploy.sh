@@ -14,6 +14,9 @@ cd ..
 
 echo "--> docker build"
 docker build -t "$imageName":"$version" .
-docker rm -f "$containerName" || echo 'continue'
+if [ "$(docker ps -aq -f name=$container_name)" ]; then
+    # Cleanup container
+    docker rm -f "$containerName" || echo 'continue'
+fi
 docker run -d -p "$port":"$exposePort" --privileged --restart=always --name "$containerName" "$imageName":"$version"
 docker rmi "$imageName":"$version"
