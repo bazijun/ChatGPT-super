@@ -6,7 +6,7 @@ imageName="chatgpt_nest_service";
 # 容器名
 containerName="chatgpt_nest_service";
 # 主机端口
-port="3003"
+port="3004"
 # 【readonly】容器端口
 exposePort="9527"
 
