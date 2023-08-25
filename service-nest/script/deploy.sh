@@ -6,7 +6,7 @@ imageName="chatgpt_nest_service";
 # 容器名
 containerName="chatgpt_nest_service";
 # 主机端口
-port="3004"
+port="3002"
 # 【readonly】容器端口
 exposePort="9527"
 
@@ -14,7 +14,7 @@ cd ..
 
 echo "--> docker build"
 docker build -t "$imageName":"$version" .
-if [ "$(docker ps -aq -f name=$container_name)" ]; then
+if [ "$(docker ps -aq -f name=$containerName)" ]; then
     # Cleanup container
     docker rm -f "$containerName" || echo 'continue'
 fi
