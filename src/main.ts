@@ -8,8 +8,8 @@ import { DEFAULT_USER_INFO } from './store/modules/user/helper'
 
 function initApp() {
   const userStore = useUserStore()
-  const { aiAvatar, aiModel } = DEFAULT_USER_INFO
-  userStore.updateUserInfo({ aiAvatar, aiModel })
+  const { aiAvatar } = DEFAULT_USER_INFO
+  userStore.updateUserInfo({ aiAvatar })
 }
 
 async function bootstrap() {
