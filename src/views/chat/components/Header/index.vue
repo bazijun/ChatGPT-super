@@ -25,6 +25,8 @@ const { isMobile } = useBasicLayout()
 
 const aiModel = useAIModel()
 
+const aiModelLabel = computed(() => chatGPTModelOptions?.find(f => f.value === aiModel.value)?.label)
+
 const appStore = useAppStore()
 const chatStore = useChatStore()
 
@@ -90,12 +92,15 @@ function handleClear() {
       </div>
     </div>
   </header>
-  <NDropdown v-if="isMobile ? collapsed : true" trigger="click" :options="chatGPTModelOptions" @select="val => aiModel = val">
+  <NDropdown
+    v-if="isMobile ? collapsed : true" trigger="click" :options="chatGPTModelOptions"
+    @select="val => aiModel = val"
+  >
     <div
       class="absolute top-12 left-1/2 -translate-x-1/2 z-[99] flex gap-2 items-center  cursor-pointer select-none rounded-md border bg-white px-4  dark:bg-[#111114] dark:border-neutral-700 text-[#4b9e5f] dark:text-[#63E2B7]"
     >
       <SvgIcon icon="ri:sparkling-2-line" />
-      <span class="whitespace-nowrap">{{ aiModel }}</span>
+      <span class="whitespace-nowrap">{{ aiModelLabel }}</span>
       <SvgIcon icon="mingcute:down-line" />
     </div>
   </NDropdown>

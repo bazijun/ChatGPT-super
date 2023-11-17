@@ -58,10 +58,12 @@ function handleUpdateCollapsed() {
   appStore.setSiderCollapsed(!collapsed.value)
 }
 
+// 初始化或切换为手机布局时，收起侧边栏
 watch(
   isMobile,
   (val) => {
-    appStore.setSiderCollapsed(val)
+    if (val)
+      appStore.setSiderCollapsed(val)
   },
   {
     immediate: true,

@@ -27,8 +27,8 @@ export interface UserState {
 
 export const chatGPTModelOptions: { label: string; key: string; value: CHAT_GPT_MODEL; tokens: number }[] = [
   { label: 'gpt-3.5-turbo', value: 'gpt-3.5-turbo-1106', key: 'gpt-3.5-turbo-1106', tokens: 16000 },
-  { label: 'gpt-4', value: 'gpt-4', key: 'gpt-4', tokens: 8000 },
   { label: 'gpt-4-turbo', value: 'gpt-4-1106-preview', key: 'gpt-4-1106-preview', tokens: 128000 },
+  { label: 'gpt-4', value: 'gpt-4', key: 'gpt-4', tokens: 8000 },
   { label: 'gpt-4-0314', value: 'gpt-4-0314', key: 'gpt-4-0314', tokens: 8000 },
   { label: 'gpt-4-0613', value: 'gpt-4-0613', key: 'gpt-4-0613', tokens: 8000 },
 ]
@@ -37,7 +37,7 @@ export const DEFAULT_USER_INFO: UserState['userInfo'] = {
   avatar: 'https://cdn.bazijun.top/img/avatar.jpg',
   aiAvatar: 'https://cdn.bazijun.top/img/cut-cat1.png',
   name: '小把子',
-  aiModel: 'gpt-3.5-turbo',
+  aiModel: chatGPTModelOptions[0].value,
   description: 'Power by <a href="https://github.com/Chanzhaoyu/chatgpt-bot" class="text-blue-500" target="_blank" >Github</a>',
   systemMessage: getDefaultSystemMessage(),
 }
