@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PluginController } from './Plugin.controller';
+import { PluginController } from './plugin.controller';
 
 @Module({
 	controllers: [PluginController],
