@@ -1,4 +1,4 @@
-import type { ChatMessage, FetchFn } from "chatgpt";
+import type { ChatMessage, FetchFn } from 'chatgpt';
 
 export interface ChatContext {
 	conversationId?: string;
@@ -24,7 +24,7 @@ export interface ModelConfig {
 }
 
 export interface chatReplyOptions {
-	message: string;
+	message: ChatContent;
 	systemMessage?: string;
 	maxModelTokens?: number;
 	model?: string;
@@ -33,7 +33,7 @@ export interface chatReplyOptions {
 }
 
 export interface chatReplyDto {
-	prompt: string;
+	prompt: ChatContent;
 	systemMessage: string;
 	model?: string;
 	maxModelTokens?: number;
@@ -44,4 +44,4 @@ export interface BalanceResponse {
 	total_usage: number;
 }
 
-export type ApiModel = "ChatGPTAPI" | "ChatGPTUnofficialProxyAPI" | undefined;
+export type ApiModel = 'ChatGPTAPI' | 'ChatGPTUnofficialProxyAPI' | undefined;

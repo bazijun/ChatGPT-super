@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create<NestExpressApplication>(AppModule);
 	app.enableCors();
+	app.useStaticAssets('uploads', { prefix: '/uploads' });
 	const configService = app.get(ConfigService);
 	const CONTAINER_PORT = configService.get('CONTAINER_PORT');
 	const HOST_PORT = configService.get('HOST_PORT');

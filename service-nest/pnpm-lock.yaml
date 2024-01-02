@@ -8,9 +8,11 @@ specifiers:
   '@nestjs/mapped-types': '*'
   '@nestjs/platform-express': ^10.0.0
   '@nestjs/schematics': ^10.0.0
+  '@nestjs/serve-static': ^4.0.0
   '@nestjs/testing': ^10.0.0
   '@types/express': ^4.17.17
   '@types/jest': ^29.5.2
+  '@types/multer': ^1.4.7
   '@types/node': ^20.3.1
   '@types/supertest': ^2.0.12
   '@typescript-eslint/eslint-plugin': ^6.0.0
@@ -39,6 +41,7 @@ dependencies:
   '@nestjs/core': 10.1.3_cbm7sg5efqqar7ntuqguk4rlum
   '@nestjs/mapped-types': 2.0.2_odz3pxxtydpap6sgjhrdybptni
   '@nestjs/platform-express': 10.1.3_yxajjqzwuyac646uxsfhswdv24
+  '@nestjs/serve-static': 4.0.0_yxajjqzwuyac646uxsfhswdv24
   chatgpt: 5.2.5
   moment: 2.29.4
   reflect-metadata: 0.1.13
@@ -50,6 +53,7 @@ devDependencies:
   '@nestjs/testing': 10.1.3_o3pqja22aqmpznrpgiffz4jxhi
   '@types/express': 4.17.17
   '@types/jest': 29.5.3
+  '@types/multer': 1.4.11
   '@types/node': 20.5.1
   '@types/supertest': 2.0.12
   '@typescript-eslint/eslint-plugin': 6.4.0_ec2ucdo575yoxr55fjuy6wxey4
@@ -1030,6 +1034,27 @@ packages:
       - chokidar
     dev: true
 
+  /@nestjs/serve-static/4.0.0_yxajjqzwuyac646uxsfhswdv24:
+    resolution: {integrity: sha512-8cTrNV2ngdHIjiLNsXePnw0+KY1ThrZGz/WeyAG5gIvmZNDbnZBOrPoYlKL+MOzlXlQStxR5jKLYmn+nJeoncQ==}
+    peerDependencies:
+      '@fastify/static': ^6.5.0
+      '@nestjs/common': ^9.0.0 || ^10.0.0
+      '@nestjs/core': ^9.0.0 || ^10.0.0
+      express: ^4.18.1
+      fastify: ^4.7.0
+    peerDependenciesMeta:
+      '@fastify/static':
+        optional: true
+      express:
+        optional: true
+      fastify:
+        optional: true
+    dependencies:
+      '@nestjs/common': 10.1.3_atc7tu2sld2m3nk4hmwkqn6qde
+      '@nestjs/core': 10.1.3_cbm7sg5efqqar7ntuqguk4rlum
+      path-to-regexp: 0.2.5
+    dev: false
+
   /@nestjs/testing/10.1.3_o3pqja22aqmpznrpgiffz4jxhi:
     resolution: {integrity: sha512-zMrO9xLPYnKtC6q1diWubuMshIp0v2aGHa58jcIfZaAlJlU/6RKsgCOiFQ42aFzxUEBRWF0LBF0aiwt04LKMyQ==}
     peerDependencies:
@@ -1250,6 +1275,12 @@ packages:
 
   /@types/mime/3.0.1:
     resolution: {integrity: sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==}
+    dev: true
+
+  /@types/multer/1.4.11:
+    resolution: {integrity: sha512-svK240gr6LVWvv3YGyhLlA+6LRRWA4mnGIU7RcNmgjBYFl6665wcXrRfxGp5tEPVHUNm5FMcmq7too9bxCwX/w==}
+    dependencies:
+      '@types/express': 4.17.17
     dev: true
 
   /@types/node/20.5.1:
@@ -4320,6 +4351,10 @@ packages:
 
   /path-to-regexp/0.1.7:
     resolution: {integrity: sha1-32BBeABfUi8V60SQ5yR6G/qmf4w=}
+
+  /path-to-regexp/0.2.5:
+    resolution: {integrity: sha1-C0JpkeOH/ExnXeI1V/NYcV62b7A=}
+    dev: false
 
   /path-to-regexp/3.2.0:
     resolution: {integrity: sha1-+nh37LxJXGAZB1YiIkU8Q8wgSl8=}

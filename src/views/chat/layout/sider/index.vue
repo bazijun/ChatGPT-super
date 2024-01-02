@@ -25,7 +25,7 @@ const dataSources = computed(() => {
   chatData.value.forEach((f) => {
     const currentHistory = historyData.value.find(fd => fd.uuid === f.uuid)!
     const contentIsKeyword = f.data.map(m => m.text).join(' ').toLocaleLowerCase().includes(lowerCaseVal)
-    const titleIsKeyword = currentHistory.title.toLocaleLowerCase().includes(lowerCaseVal)
+    const titleIsKeyword = currentHistory.title?.toLocaleLowerCase()?.includes(lowerCaseVal)
     if (contentIsKeyword || titleIsKeyword)
       filterHistoryList.push(currentHistory)
   })

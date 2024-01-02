@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick } from 'vue'
 import { NDropdown } from 'naive-ui'
+import { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
@@ -25,7 +26,7 @@ const { isMobile } = useBasicLayout()
 
 const aiModel = useAIModel()
 
-const aiModelLabel = computed(() => chatGPTModelOptions?.find(f => f.value === aiModel.value)?.label)
+const ModalInfo = computed(() => chatGPTModelOptions?.find(f => f.value === aiModel.value))
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
@@ -93,14 +94,14 @@ function handleClear() {
     </div>
   </header>
   <NDropdown
-    v-if="isMobile ? collapsed : true" trigger="click" :options="chatGPTModelOptions"
-    @select="val => aiModel = val"
+    v-if="isMobile ? collapsed : true" trigger="click"
+    :options="chatGPTModelOptions as unknown as DropdownMixedOption[]" @select="val => aiModel = val"
   >
     <div
       class="absolute top-12 left-1/2 -translate-x-1/2 z-[99] flex gap-2 items-center  cursor-pointer select-none rounded-md border bg-white px-4  dark:bg-[#111114] dark:border-neutral-700 text-[#4b9e5f] dark:text-[#63E2B7]"
     >
-      <SvgIcon icon="ri:sparkling-2-line" />
-      <span class="whitespace-nowrap">{{ aiModelLabel }}</span>
+      <SvgIcon :icon="ModalInfo?.vision ? 'pepicons-pop:eye' : 'ri:sparkling-2-line'" />
+      <span class="whitespace-nowrap">{{ ModalInfo?.label }}</span>
       <SvgIcon icon="mingcute:down-line" />
     </div>
   </NDropdown>

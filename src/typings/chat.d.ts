@@ -1,5 +1,5 @@
 declare namespace Chat {
-
+  type ChatContent = string | Record<string, string>[];
 	interface Chat {
 		dateTime: string
 		text: string
@@ -7,7 +7,7 @@ declare namespace Chat {
 		error?: boolean
 		loading?: boolean
 		conversationOptions?: ConversationRequest | null
-		requestOptions: { prompt: string; options?: ConversationRequest | null }
+		requestOptions: { prompt: ChatContent; options?: ConversationRequest | null }
         model?: string
         usage?: Partial<{ completion_tokens: number; prompt_tokens: number; total_tokens: number }>
 	}

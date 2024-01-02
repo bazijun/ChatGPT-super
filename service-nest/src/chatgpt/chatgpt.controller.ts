@@ -1,17 +1,17 @@
-import { Body, Controller, Inject, Post, Res } from "@nestjs/common";
-import { ChatgptService } from "./chatgpt.service";
-import { chatReplyDto } from "./type";
-import { Response } from "express";
-import type { ChatMessage } from "chatgpt";
+import { Body, Controller, Inject, Post, Res } from '@nestjs/common';
+import { ChatgptService } from './chatgpt.service';
+import { chatReplyDto } from './type';
+import { Response } from 'express';
+import type { ChatMessage } from 'chatgpt';
 
 @Controller()
 export class ChatgptController {
 	@Inject(ChatgptService)
 	private readonly chatgptService: ChatgptService;
 
-	@Post("chat-process")
+	@Post('chat-process')
 	async chatProcess(@Body() body: chatReplyDto, @Res() res: Response) {
-		res.setHeader("Content-type", "application/octet-stream");
+		res.setHeader('Content-type', 'application/octet-stream');
 		try {
 			const {
 				prompt,
@@ -44,7 +44,7 @@ export class ChatgptController {
 	}
 
 	// 暂不支持api查询余额啦
-	@Post("config")
+	@Post('config')
 	async configInfo() {
 		const response = await this.chatgptService.chatConfig();
 		return response;

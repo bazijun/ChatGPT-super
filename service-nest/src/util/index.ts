@@ -1,7 +1,7 @@
-import * as moment from "moment";
+import * as moment from 'moment';
 
 interface SendResponseOptions<T = any> {
-	type: "Success" | "Fail";
+	type: 'Success' | 'Fail';
 	message?: string;
 	data?: T;
 }
@@ -11,15 +11,15 @@ export function formatDate(): string[] {
 	const year = today.getFullYear();
 	const month = today.getMonth() + 1;
 	const lastDay = new Date(year, month, 0);
-	const formattedFirstDay = `${year}-${month.toString().padStart(2, "0")}-01`;
+	const formattedFirstDay = `${year}-${month.toString().padStart(2, '0')}-01`;
 	const formattedLastDay = `${year}-${month
 		.toString()
-		.padStart(2, "0")}-${lastDay.getDate().toString().padStart(2, "0")}`;
+		.padStart(2, '0')}-${lastDay.getDate().toString().padStart(2, '0')}`;
 	return [formattedFirstDay, formattedLastDay];
 }
 
 export function sendResponse<T>(options: SendResponseOptions<T>) {
-	if (options.type === "Success") {
+	if (options.type === 'Success') {
 		return Promise.resolve({
 			message: options.message ?? null,
 			data: options.data ?? null,
@@ -29,7 +29,7 @@ export function sendResponse<T>(options: SendResponseOptions<T>) {
 
 	// eslint-disable-next-line prefer-promise-reject-errors
 	return Promise.reject({
-		message: options.message ?? "Failed",
+		message: options.message ?? 'Failed',
 		data: options.data ?? null,
 		status: options.type,
 	});

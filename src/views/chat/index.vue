@@ -2,8 +2,9 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
+import { NAutoComplete, NButton, NInput, NUpload, useDialog, useMessage } from 'naive-ui'
 import html2canvas from 'html2canvas'
+import type { OnChange, OnFinish } from 'naive-ui/es/upload/src/interface'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -12,10 +13,10 @@ import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useChatStore, usePromptStore } from '@/store'
-import { fetchChatAPIProcess } from '@/api'
+import { useChatStore, usePromptStore, useUserStore } from '@/store'
+import { UploadUrl, fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
-import { getLocalState } from '@/store/modules/user/helper'
+import { chatGPTModelOptions, getLocalState } from '@/store/modules/user/helper'
 
 let controller = new AbortController()
 
@@ -33,15 +34,39 @@ const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
 const { scrollRef, scrollToBottom } = useScroll()
 const { usingContext, toggleUsingContext } = useUsingContext()
+const userStore = useUserStore()
+const userInfo = computed(() => userStore.userInfo)
 
 const { uuid } = route.params as { uuid: string }
 
 const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
 const conversationList = computed(() => dataSources.value.filter(item => (!item.inversion && !item.error)))
 const emptyConversationList = computed(() => !conversationList.value?.length)
+const isVision = computed(() => chatGPTModelOptions.find(f => f.value === userInfo.value?.aiModel)?.vision)
 
-const prompt = ref<string>('')
 const loading = ref<boolean>(false)
+const prompt = ref<string>('')
+const imagesPrompt = ref<Record<string, string>[]>([])
+const uploader = ref<{ clear: () => void }>()
+
+const uploadFinish: OnFinish = ({ file, event }) => {
+  const filePath = (event?.target as XMLHttpRequest)?.response
+  const imageUrl = import.meta.env.VITE_GLOB_API_URL + filePath
+  return { ...file, url: imageUrl }
+}
+
+const onPromptImagesChange: OnChange = ({ file, fileList }) => {
+  const { status } = file
+  if (status === 'finished' || status === 'removed') {
+    imagesPrompt.value = fileList?.map(file => ({
+      type: 'image_url',
+      image_url: file.url as string,
+    }))
+  }
+  else if (status === 'error') {
+    ms.error(`${file.name} 文件上传失败`)
+  }
+}
 
 // 添加PromptStore
 const promptStore = usePromptStore()
@@ -53,12 +78,14 @@ function handleSubmit() {
 }
 
 async function onConversation() {
-  let message = prompt.value
+  // 视觉modal的message为数组格式
+  const visionMessage = [{ type: 'text', text: prompt.value }, ...imagesPrompt.value]
+  let message: Chat.ChatContent = isVision.value ? visionMessage : prompt.value
 
   if (loading.value)
     return
 
-  if (!message || message.trim() === '')
+  if (!prompt.value || prompt.value?.trim() === '')
     return
 
   controller = new AbortController()
@@ -67,7 +94,7 @@ async function onConversation() {
     +uuid,
     {
       dateTime: new Date().toLocaleString(),
-      text: message,
+      text: prompt.value,
       inversion: true,
       error: false,
       conversationOptions: null,
@@ -78,6 +105,10 @@ async function onConversation() {
 
   loading.value = true
   prompt.value = ''
+  if (isVision.value) {
+    imagesPrompt.value = []
+    uploader.value?.clear()
+  }
 
   let options: Chat.ConversationRequest = {}
   const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
@@ -107,6 +138,7 @@ async function onConversation() {
         options,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
+          // Todo: 冗余代母，意义不明，待整理
           const xhr = event.target
           const { responseText } = xhr
           // Always process the final line
@@ -487,8 +519,8 @@ onUnmounted(() => {
             <div>
               <Message
                 v-for="(item, index) of dataSources" :key="index" :date-time="item.dateTime" :model="item.model"
-                :text="item.text" :inversion="item.inversion" :error="item.error" :loading="item.loading" :usage="item.usage"
-                @regenerate="onRegenerate(index)" @delete="handleDelete(index)"
+                :text="item.text" :inversion="item.inversion" :error="item.error" :loading="item.loading"
+                :usage="item.usage" @regenerate="onRegenerate(index)" @delete="handleDelete(index)"
               />
               <div class="sticky bottom-0 left-0 flex justify-center">
                 <NButton v-if="loading" type="warning" @click="handleStop">
@@ -505,8 +537,17 @@ onUnmounted(() => {
     </main>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
+        <div class="pb-2">
+          <NUpload
+            v-if="isVision" ref="uploader" accept="image/*" :action="UploadUrl" directory-dnd
+            list-type="image-card" @finish="uploadFinish" @change="onPromptImagesChange"
+          />
+        </div>
         <div class="flex items-center justify-between space-x-2">
-          <NButton type="primary" :circle="isMobile" :quaternary="isMobile" :dashed="!isMobile" :disabled="emptyConversationList" @click="handleAdd">
+          <NButton
+            type="primary" :circle="isMobile" :quaternary="isMobile" :dashed="!isMobile"
+            :disabled="emptyConversationList" @click="handleAdd"
+          >
             <template #icon>
               <span class="text-xl text-[#4b9e5f] dark:text-[#63E2B7]">
                 <SvgIcon icon="akar-icons:chat-add" />
@@ -516,9 +557,9 @@ onUnmounted(() => {
           <NAutoComplete v-model:value="prompt" :options="searchOptions" :render-label="renderOption">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <NInput
-                v-model:value="prompt" type="textarea"
-                :placeholder="placeholder" :autosize="{ minRows: 1, maxRows: isMobile ? 4 : 8 }"
-                @input="handleInput" @focus="handleFocus" @blur="handleBlur" @keypress="handleEnter"
+                v-model:value="prompt" type="textarea" :placeholder="placeholder"
+                :autosize="{ minRows: 1, maxRows: isMobile ? 4 : 8 }" @input="handleInput" @focus="handleFocus"
+                @blur="handleBlur" @keypress="handleEnter"
               />
             </template>
           </NAutoComplete>

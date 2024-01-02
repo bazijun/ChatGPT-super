@@ -8,7 +8,7 @@ interface ChatContext {
 }
 
 interface chatReplyRequest {
-  prompt: string
+  prompt: Chat.ChatContent
   systemMessage: string
   model?: string
   maxModelTokens?: number
@@ -35,7 +35,7 @@ export function fetchChatConfig<T = any>() {
 
 export function fetchChatAPIProcess<T = any>(
   params: {
-    prompt: string
+    prompt: Chat.ChatContent
     options?: ChatContext
     signal?: GenericAbortSignal
     onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void
@@ -70,3 +70,5 @@ export function fetchVerify<T>(token: string) {
     data: { token },
   })
 }
+
+export const UploadUrl = 'https://bazijun.top/api/plugin/upload'
