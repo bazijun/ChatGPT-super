@@ -62,7 +62,6 @@ export class ChatgptService {
 			if (lastContext) {
 				options = { parentMessageId: lastContext.parentMessageId };
 			}
-			global.console.log('xmessage==>', message);
 			const response = await this.chatGPTApi.sendMessage(message, {
 				...options,
 				completionParams: { model },

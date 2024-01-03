@@ -93,10 +93,14 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     addChatByUuid(uuid: number, chat: Chat.Chat) {
+      // 视觉prompt为数组需要特殊处理
+      const prompt = chat.requestOptions?.prompt
+      const text = Array.isArray(prompt) ? prompt[0]?.text : prompt
       if (!uuid || uuid === 0) {
         if (this.history.length === 0) {
           const uuid = Date.now()
-          this.history.push({ uuid, title: chat.text, isEdit: false })
+
+          this.history.push({ uuid, title: text, isEdit: false })
           this.chat.push({ uuid, data: [chat] })
           this.active = uuid
           this.recordState()
@@ -104,7 +108,7 @@ export const useChatStore = defineStore('chat-store', {
         else {
           this.chat[0].data.push(chat)
           if (this.history[0].title === 'New Chat')
-            this.history[0].title = chat.text
+            this.history[0].title = text
           this.recordState()
         }
       }
@@ -113,7 +117,7 @@ export const useChatStore = defineStore('chat-store', {
       if (index !== -1) {
         this.chat[index].data.push(chat)
         if (this.history[index].title === 'New Chat')
-          this.history[index].title = chat.text
+          this.history[index].title = text
         this.recordState()
       }
     },

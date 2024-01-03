@@ -71,4 +71,4 @@ export function fetchVerify<T>(token: string) {
   })
 }
 
-export const UploadUrl = 'https://bazijun.top/api/plugin/upload'
+export const UploadUrl = `${import.meta.env.VITE_GLOB_UPLOAD_URL}plugin/upload`

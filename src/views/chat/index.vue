@@ -51,7 +51,7 @@ const uploader = ref<{ clear: () => void }>()
 
 const uploadFinish: OnFinish = ({ file, event }) => {
   const filePath = (event?.target as XMLHttpRequest)?.response
-  const imageUrl = import.meta.env.VITE_GLOB_API_URL + filePath
+  const imageUrl = import.meta.env.VITE_GLOB_UPLOAD_URL + filePath
   return { ...file, url: imageUrl }
 }
 
@@ -80,7 +80,9 @@ function handleSubmit() {
 async function onConversation() {
   // 视觉modal的message为数组格式
   const visionMessage = [{ type: 'text', text: prompt.value }, ...imagesPrompt.value]
+  const visionText = `<p><span>${prompt.value}<span><div style="display:flex;gap:5px">${imagesPrompt.value?.map((item, index) => `<img src="${item.image_url}" alt="图${index}" style="width:50px;height:50px"></img>`)?.join('')}<div></p>`
   let message: Chat.ChatContent = isVision.value ? visionMessage : prompt.value
+  const chatText = isVision.value ? visionText : prompt.value
 
   if (loading.value)
     return
@@ -94,7 +96,7 @@ async function onConversation() {
     +uuid,
     {
       dateTime: new Date().toLocaleString(),
-      text: prompt.value,
+      text: chatText,
       inversion: true,
       error: false,
       conversationOptions: null,
@@ -138,7 +140,6 @@ async function onConversation() {
         options,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
-          // Todo: 冗余代母，意义不明，待整理
           const xhr = event.target
           const { responseText } = xhr
           // Always process the final line
