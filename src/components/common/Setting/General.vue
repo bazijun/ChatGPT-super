@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { NButton, NInput, NPopconfirm, NSelect, useMessage } from 'naive-ui'
+import { SelectMixedOption } from 'naive-ui/es/select/src/interface'
 import type { Language, Theme } from '@/store/modules/app/helper'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useUserStore } from '@/store'
@@ -131,7 +132,7 @@ function handleImportButtonClick(): void {
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.aiModel') }}</span>
         <div class="flex flex-wrap items-center gap-4">
           <NSelect
-            style="width: 180px" :value="aiModel" :options="chatGPTModelOptions" @update:value="val => aiModel = val"
+            style="width: 180px" :value="aiModel" :options="chatGPTModelOptions as unknown as SelectMixedOption[]" @update:value="val => aiModel = val"
           />
         </div>
       </div>
