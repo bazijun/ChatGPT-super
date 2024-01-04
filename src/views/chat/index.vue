@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { NAutoComplete, NButton, NInput, NUpload, useDialog, useMessage } from 'naive-ui'
+import { NAutoComplete, NButton, NIcon, NInput, NUpload, NUploadDragger, useDialog, useMessage } from 'naive-ui'
 import html2canvas from 'html2canvas'
 import type { OnChange, OnFinish } from 'naive-ui/es/upload/src/interface'
 import { Message } from './components'
@@ -51,8 +51,7 @@ const uploader = ref<{ clear: () => void }>()
 
 const uploadFinish: OnFinish = ({ file, event }) => {
   const filePath = (event?.target as XMLHttpRequest)?.response
-  const imageUrl = import.meta.env.VITE_GLOB_UPLOAD_URL + filePath
-  return { ...file, url: imageUrl }
+  return { ...file, url: filePath }
 }
 
 const onPromptImagesChange: OnChange = ({ file, fileList }) => {
@@ -80,7 +79,7 @@ function handleSubmit() {
 async function onConversation() {
   // 视觉modal的message为数组格式
   const visionMessage = [{ type: 'text', text: prompt.value }, ...imagesPrompt.value]
-  const visionText = `<p><span>${prompt.value}<span><div style="display:flex;gap:5px">${imagesPrompt.value?.map((item, index) => `<img src="${item.image_url}" alt="图${index}" style="width:50px;height:50px"></img>`)?.join('')}<div></p>`
+  const visionText = `<p><span>${prompt.value}<span><div style="display:flex;gap:5px">${imagesPrompt.value?.map((item, index) => `<img src="${item.image_url}" alt="图${index}" style="width:80px;height:80px"></img>`)?.join('')}<div></p>`
   let message: Chat.ChatContent = isVision.value ? visionMessage : prompt.value
   const chatText = isVision.value ? visionText : prompt.value
 
@@ -542,7 +541,17 @@ onUnmounted(() => {
           <NUpload
             v-if="isVision" ref="uploader" accept="image/*" :action="UploadUrl" directory-dnd
             list-type="image-card" @finish="uploadFinish" @change="onPromptImagesChange"
-          />
+          >
+            <NUploadDragger>
+              <NIcon size="40">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <path
+                    d="M368.5 240H272v-96.5c0-8.8-7.2-16-16-16s-16 7.2-16 16V240h-96.5c-8.8 0-16 7.2-16 16 0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7H240v96.5c0 4.4 1.8 8.4 4.7 11.3 2.9 2.9 6.9 4.7 11.3 4.7 8.8 0 16-7.2 16-16V272h96.5c8.8 0 16-7.2 16-16s-7.2-16-16-16z"
+                  />
+                </svg>
+              </NIcon>
+            </NUploadDragger>
+          </NUpload>
         </div>
         <div class="flex items-center justify-between space-x-2">
           <NButton

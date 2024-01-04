@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-
+import * as fs from 'fs';
 @Controller('plugin')
 export class PluginController {
 	@Post('upload')
@@ -25,6 +25,10 @@ export class PluginController {
 		}),
 	)
 	uploadFile(@UploadedFile() file: Express.Multer.File) {
-		return 'uploads/' + file.filename;
+		const imageBuffer = fs.readFileSync(file.path); // 将上传的图片转换成 base64 编码
+		const imageBase64 = imageBuffer.toString('base64');
+		const mimetype = file.mimetype;
+		fs.unlinkSync(file.path); // 清除保存的图片（如果不再需要）
+		return 'data:' + mimetype + ';base64,' + imageBase64;
 	}
 }

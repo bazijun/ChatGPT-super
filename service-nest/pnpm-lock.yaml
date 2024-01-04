@@ -17,6 +17,7 @@ specifiers:
   '@types/supertest': ^2.0.12
   '@typescript-eslint/eslint-plugin': ^6.0.0
   '@typescript-eslint/parser': ^6.0.0
+  body-parser: ^1.20.2
   chatgpt: ^5.2.5
   cross-env: ^7.0.3
   eslint: ^8.42.0
@@ -42,6 +43,7 @@ dependencies:
   '@nestjs/mapped-types': 2.0.2_odz3pxxtydpap6sgjhrdybptni
   '@nestjs/platform-express': 10.1.3_yxajjqzwuyac646uxsfhswdv24
   '@nestjs/serve-static': 4.0.0_yxajjqzwuyac646uxsfhswdv24
+  body-parser: 1.20.2
   chatgpt: 5.2.5
   moment: 2.29.4
   reflect-metadata: 0.1.13
