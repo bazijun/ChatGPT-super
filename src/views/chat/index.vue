@@ -48,6 +48,7 @@ const loading = ref<boolean>(false)
 const prompt = ref<string>('')
 const imagesPrompt = ref<Record<string, string>[]>([])
 const uploader = ref<{ clear: () => void }>()
+const openUpload = ref(false)
 
 const uploadFinish: OnFinish = ({ file, event }) => {
   const filePath = (event?.target as XMLHttpRequest)?.response
@@ -537,10 +538,10 @@ onUnmounted(() => {
     </main>
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
-        <div class="pb-2">
+        <div v-if="openUpload" class="pb-2">
           <NUpload
-            v-if="isVision" ref="uploader" accept="image/*" :action="UploadUrl" directory-dnd
-            list-type="image-card" @finish="uploadFinish" @change="onPromptImagesChange"
+            ref="uploader" accept="image/*" :action="UploadUrl" directory-dnd list-type="image-card"
+            @finish="uploadFinish" @change="onPromptImagesChange"
           >
             <NUploadDragger>
               <NIcon size="40">
@@ -561,6 +562,16 @@ onUnmounted(() => {
             <template #icon>
               <span class="text-xl text-[#4b9e5f] dark:text-[#63E2B7]">
                 <SvgIcon icon="akar-icons:chat-add" />
+              </span>
+            </template>
+          </NButton>
+          <NButton
+            v-if="isVision" type="primary" :circle="isMobile" :quaternary="isMobile" :dashed="!isMobile"
+            @click="openUpload = !openUpload"
+          >
+            <template #icon>
+              <span class="text-xl text-[#4b9e5f] dark:text-[#63E2B7]">
+                <SvgIcon :icon="openUpload ? 'ri:skip-down-fill' : 'uil:image-upload'" />
               </span>
             </template>
           </NButton>
