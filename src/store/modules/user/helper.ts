@@ -10,6 +10,7 @@ export type CHAT_GPT_MODEL =
   'gpt-4-turbo' |
   'gpt-4-1106-preview' |
   'gpt-4-vision-preview' |
+  'gpt-4-turbo-preview' |
   'gpt-4-0314' |
   'gpt-4-0613'
 
@@ -36,7 +37,7 @@ export interface ChatGPTModel {
 
 export const chatGPTModelOptions: ChatGPTModel[] = [
   { label: 'gpt-3.5-turbo', value: 'gpt-3.5-turbo-1106', key: 'gpt-3.5-turbo-1106', tokens: 16000, vision: false },
-  { label: 'gpt-4-turbo', value: 'gpt-4-1106-preview', key: 'gpt-4-1106-preview', tokens: 128000, vision: false },
+  { label: 'gpt-4-turbo', value: 'gpt-4-turbo-preview', key: 'gpt-4-turbo-preview', tokens: 128000, vision: false },
   { label: 'gpt-4-vision', value: 'gpt-4-vision-preview', key: 'gpt-4-vision-preview', tokens: 128000, vision: true },
   { label: 'gpt-4', value: 'gpt-4', key: 'gpt-4', tokens: 8000, vision: false },
   // { label: 'gpt-4-0314', value: 'gpt-4-0314', key: 'gpt-4-0314', tokens: 8000 },
